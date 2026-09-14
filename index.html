@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Talent - Simulasi Manajemen Talenta ASN</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: { 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .header-logo { display: block; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important; }
+        
+        .matrix-cell { 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .grid-box-active {
+            box-shadow: 0 0 0 3px white, 0 0 0 7px #3b82f6, 0 15px 30px -5px rgba(37, 99, 235, 0.4) !important;
+            transform: scale(1.06); 
+            z-index: 20; 
+            border-color: #3b82f6 !important;
+            opacity: 1 !important;
+            filter: grayscale(0%) !important;
+        }
+        .info-btn { transition: color 0.2s, transform 0.2s; }
+        .info-btn:hover { transform: scale(1.15); }
+        
+        /* Custom styles for tables */
+        .calc-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .calc-table th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+        }
+        .calc-table th:last-child { border-right: none; }
+        .calc-table td {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        .calc-table td:last-child { border-right: none; }
+        .calc-table tr:last-child td { border-bottom: none; }
+        
+        .row-green { background-color: #dcfce7; color: #166534; }
+        .row-red { background-color: #fee2e2; color: #991b1b; }
+        .row-orange { background-color: #ffedd5; color: #9a3412; }
+
+        /* Matrix layout sync: samakan proporsi sumbu Kinerja & Potensial */
+        .matrix-shell {
+            --matrix-left-track: clamp(2.9rem, 12vw, 5rem);
+            --matrix-axis-thickness: clamp(1.9rem, 5vw, 2.4rem);
+            --matrix-gap: clamp(0.35rem, 1vw, 0.75rem);
+            --matrix-cell-gap: clamp(0.35rem, 1vw, 0.75rem);
+            width: min(100%, 500px);
+        }
+        .matrix-top-row,
+        .matrix-bottom-row {
+            display: grid !important;
+            grid-template-columns: var(--matrix-left-track) minmax(0, 1fr) !important;
+            column-gap: var(--matrix-gap) !important;
+            width: 100% !important;
+            align-items: stretch !important;
+        }
+        .matrix-side-axis {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: var(--matrix-axis-thickness) minmax(0, 1fr) !important;
+            align-items: stretch !important;
+            margin-right: 0 !important;
+        }
+        .matrix-axis-y-title {
+            width: var(--matrix-axis-thickness) !important;
+            min-width: var(--matrix-axis-thickness) !important;
+            min-height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .matrix-y-levels {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        .matrix-core-grid {
+            width: 100% !important;
+            max-width: none !important;
+            aspect-ratio: 1 / 1 !important;
+            gap: var(--matrix-cell-gap) !important;
+        }
+        .matrix-bottom-spacer {
+            width: 100% !important;
+            margin-right: 0 !important;
+        }
+        .matrix-bottom-axis {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .matrix-x-levels {
+            width: 100% !important;
+            margin-bottom: 0.3rem !important;
+        }
+        .matrix-axis-x-title {
+            width: 100% !important;
+            min-height: var(--matrix-axis-thickness) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .matrix-axis-y-title span,
+        .matrix-axis-x-title span {
+            font-size: clamp(0.7rem, 1.8vw, 0.95rem);
+            line-height: 1 !important;
+        }
+        .matrix-y-levels span,
+        .matrix-x-levels span {
+            line-height: 1.08 !important;
+        }
+        @media (max-width: 639px) {
+            .matrix-shell {
+                --matrix-left-track: 3rem;
+                --matrix-axis-thickness: 1.9rem;
+                --matrix-gap: 0.35rem;
+                --matrix-cell-gap: 0.35rem;
+            }
+            .matrix-y-levels { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
+            .matrix-axis-x-title { min-height: 1.9rem !important; }
+        }
+
+        /* =========================================================
+           PRINT / PDF — F4 1 HALAMAN (COMPACT + AUTO-FILL)
+           Layout dirapatkan, tipografi diperbesar, dan skala print
+           otomatis mencari ukuran terbesar yang tetap aman 1 halaman.
+           ========================================================= */
+        @media print {
+            @page {
+                size: 210mm 330mm;
+                margin: 4mm 5mm 9mm 5mm;
+            }
+
+            :root {
+                --print-scale: 1;
+                --row-pad: 0.85mm;
+                --head-pad: 0.65mm;
+                --detail-font: 7.4px;
+                --detail-head-font: 7px;
+            }
+
+            html, body {
+                width: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                background: #fff !important;
+                color: #111827 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body {
+                display: block !important;
+                font-size: 8.2px !important;
+            }
+
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .blur-2xl { display: none !important; }
+
+            /* Header PDF: struktur tetap, tanpa wrap/tumpang tindih. */
+            header {
+                position: static !important;
+                height: 14mm !important;
+                min-height: 14mm !important;
+                box-sizing: border-box !important;
+                padding: 0 !important;
+                margin: 0 0 1.2mm 0 !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+            }
+            header .header-inner {
+                height: 100% !important;
+                width: 100% !important;
+                max-width: none !important;
+                padding: 0.7mm 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                flex-wrap: nowrap !important;
+                gap: 0 !important;
+                box-sizing: border-box !important;
+            }
+            header .header-brand {
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 100% !important;
+                display: grid !important;
+                grid-template-columns: 31mm minmax(0, 1fr) !important;
+                column-gap: 2.2mm !important;
+                align-items: center !important;
+            }
+            header .header-logo {
+                width: 31mm !important;
+                height: 11mm !important;
+                max-width: 31mm !important;
+                max-height: 11mm !important;
+                object-fit: contain !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
+            }
+            header .header-copy {
+                min-width: 0 !important;
+                height: 11mm !important;
+                display: grid !important;
+                grid-template-rows: 4.1mm 3.1mm 2.6mm !important;
+                align-content: center !important;
+                overflow: hidden !important;
+            }
+            header .header-topline {
+                display: flex !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                gap: 2mm !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+            }
+            header .header-title {
+                flex: 0 0 auto !important;
+                white-space: nowrap !important;
+                font-size: 11.2px !important;
+                line-height: 1 !important;
+                margin: 0 !important;
+            }
+            header .header-badge {
+                flex: 0 0 auto !important;
+                white-space: nowrap !important;
+                font-size: 6.4px !important;
+                line-height: 1 !important;
+                padding: 0.55mm 2.2mm !important;
+                margin: 0 !important;
+                border-radius: 3mm !important;
+            }
+            header .header-subtitle {
+                display: block !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                font-size: 6.8px !important;
+                line-height: 1.1 !important;
+                margin: 0 !important;
+            }
+            #printTimestamp {
+                display: block !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                font-size: 5.8px !important;
+                line-height: 1.05 !important;
+                margin: 0 !important;
+            }
+
+            /*
+             * Main memakai hampir seluruh tinggi F4, tetapi padding bawah
+             * tetap menjadi zona aman eksklusif untuk footer/footnote.
+             */
+            main {
+                display: block !important;
+                position: relative !important;
+                width: 100% !important;
+                max-width: none !important;
+                height: 293.5mm !important;
+                max-height: 293.5mm !important;
+                box-sizing: border-box !important;
+                padding: 0 0 5mm 0 !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+            }
+
+            section.lg\:col-span-5 { display: none !important; }
+            section.lg\:col-span-7 {
+                display: flex !important;
+                flex-direction: column !important;
+                width: calc(100% / var(--print-scale)) !important;
+                max-width: none !important;
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                gap: 0 !important;
+                transform: scale(var(--print-scale)) !important;
+                transform-origin: top left !important;
+            }
+
+            /* Ringkasan + Matriks: dua kolom tetap, gap dipersempit. */
+            section.lg\:col-span-7 > div:first-child {
+                flex: 0 0 auto !important;
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+                gap: 2mm !important;
+                margin: 0 0 1.2mm 0 !important;
+                align-items: stretch !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            section.lg\:col-span-7 > div:first-child > div {
+                min-width: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 68mm !important;
+                max-height: none !important;
+                overflow: visible !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Ringkasan: padding turun, teks naik. */
+            section.lg\:col-span-7 > div:first-child > div:first-child {
+                padding: 2mm !important;
+            }
+            .result-identity {
+                padding-bottom: 1.1mm !important;
+                margin-bottom: 1.1mm !important;
+            }
+            .result-title {
+                display: block !important;
+                width: 100% !important;
+                font-size: 8.8px !important;
+                line-height: 1 !important;
+                letter-spacing: 0.10em !important;
+                white-space: nowrap !important;
+                margin: 0 0 1mm 0 !important;
+            }
+            .result-identity-row {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) 29mm !important;
+                gap: 1.8mm !important;
+                align-items: stretch !important;
+                margin-top: 0 !important;
+            }
+            .result-person {
+                min-width: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+            }
+            #outPegawaiName {
+                font-size: 9.8px !important;
+                line-height: 1.05 !important;
+                margin: 0 0 0.65mm 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            #outPegawaiInstansi,
+            #outPegawaiTarget {
+                display: block !important;
+                font-size: 6.6px !important;
+                line-height: 1.08 !important;
+                margin: 0 0 0.38mm 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            #outPegawaiTarget { margin-bottom: 0 !important; }
+            .result-position {
+                width: 29mm !important;
+                min-width: 29mm !important;
+                padding: 1.1mm 1.5mm !important;
+                box-sizing: border-box !important;
+            }
+            .result-position > span:first-child {
+                font-size: 6.4px !important;
+                line-height: 1.05 !important;
+                white-space: nowrap !important;
+            }
+            #outBoxBadge { font-size: 10.5px !important; padding: 0.35mm 1.2mm !important; }
+            #outValueY, #outValueX { font-size: 10.5px !important; }
+            #outStatus {
+                font-size: 7.1px !important;
+                line-height: 1.06 !important;
+                overflow-wrap: anywhere !important;
+            }
+            #outStatus ol, #outStatus ul { margin: 0.45mm 0 !important; padding-left: 3.2mm !important; }
+            #outStatus li { margin: 0 0 0.22mm 0 !important; }
+
+            /* Matriks 9 Kotak: lebih rapat tanpa mengorbankan label. */
+            .matrix-shell {
+                /* Samakan proporsi PDF dengan tampilan web */
+                --matrix-left-track: 18mm !important;
+                --matrix-axis-thickness: 8mm !important;
+                --matrix-gap: 1.5mm !important;
+                --matrix-cell-gap: 1mm !important;
+                width: 100% !important;
+            }
+            .matrix-top-row, .matrix-bottom-row {
+                grid-template-columns: var(--matrix-left-track) minmax(0, 1fr) !important;
+                column-gap: var(--matrix-gap) !important;
+            }
+            .matrix-side-axis {
+                width: var(--matrix-left-track) !important;
+                min-width: var(--matrix-left-track) !important;
+                grid-template-columns: var(--matrix-axis-thickness) minmax(0, 1fr) !important;
+            }
+            .matrix-bottom-spacer {
+                width: var(--matrix-left-track) !important;
+                min-width: var(--matrix-left-track) !important;
+            }
+            .matrix-axis-y-title {
+                width: var(--matrix-axis-thickness) !important;
+                min-width: var(--matrix-axis-thickness) !important;
+            }
+            .matrix-axis-y-title span,
+            .matrix-axis-x-title span {
+                font-size: 8.4px !important;
+                line-height: 1 !important;
+                letter-spacing: 0.22em !important;
+            }
+            .matrix-y-levels span,
+            .matrix-x-levels span:first-child {
+                font-size: 7.1px !important;
+                line-height: 1.06 !important;
+            }
+            .matrix-x-levels span:last-child {
+                font-size: 5.8px !important;
+                line-height: 1.05 !important;
+            }
+            .matrix-axis-x-title {
+                height: var(--matrix-axis-thickness) !important;
+                min-height: var(--matrix-axis-thickness) !important;
+            }
+            section.lg\:col-span-7 > div:first-child > div:nth-child(2) {
+                padding: 1.8mm !important;
+                overflow: visible !important;
+            }
+            section.lg\:col-span-7 > div:first-child > div:nth-child(2) > div:first-child {
+                margin-bottom: 0.6mm !important;
+                padding-bottom: 0.35mm !important;
+            }
+            section.lg\:col-span-7 > div:first-child > div:nth-child(2) > div:nth-child(2) {
+                flex: 1 1 auto !important;
+                min-height: 0 !important;
+                padding: 0 !important;
+            }
+            section.lg\:col-span-7 > div:first-child > div:nth-child(2) .max-w-\[500px\] {
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .matrix-core-grid {
+                width: 100% !important;
+                max-width: none !important;
+                aspect-ratio: 1 / 1 !important;
+                margin: 0 !important;
+                gap: 1mm !important;
+            }
+            .matrix-cell {
+                min-width: 0 !important;
+                min-height: 0 !important;
+                padding: 0.7mm !important;
+                border-width: 1px !important;
+                border-radius: 1mm !important;
+                transform: none !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+            }
+            .matrix-cell span:first-child {
+                font-size: 9.6px !important;
+                line-height: 1.02 !important;
+                margin: 0 !important;
+            }
+            .matrix-cell span:nth-child(2) {
+                font-size: 6.7px !important;
+                line-height: 1.08 !important;
+                margin: 0.35mm 0 0 !important;
+                overflow-wrap: anywhere !important;
+            }
+
+            /* Nilai Talenta dirapatkan. */
+            section.lg\:col-span-7 > div:nth-child(2) {
+                flex: 0 0 auto !important;
+                margin: 0 0 1.2mm 0 !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(2) th,
+            section.lg\:col-span-7 > div:nth-child(2) td {
+                padding-top: 0.55mm !important;
+                padding-bottom: 0.55mm !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(2) p { margin-top: 0 !important; margin-bottom: 0.25mm !important; }
+
+            /*
+             * Tabel rinci harus mengalir normal. Jangan paksa tinggi dengan grid/fraction,
+             * karena pada print Chromium isi tabel dapat meluber dan menimpa kotak Total.
+             * Ruang halaman diisi oleh JS melalui --row-pad / ukuran font, bukan height paksa.
+             */
+            section.lg\:col-span-7 > div:nth-child(3) {
+                flex: 0 0 auto !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: visible !important;
+                break-before: auto !important;
+                page-break-before: auto !important;
+            }
+
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(2),
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(4) {
+                display: block !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                padding-left: 0.6mm !important;
+                padding-right: 0.6mm !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(2) .calc-table,
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(4) .calc-table {
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+            }
+            .calc-table thead,
+            .calc-table tbody,
+            .calc-table tr {
+                height: auto !important;
+            }
+            th, td {
+                padding: var(--row-pad) 0.9mm !important;
+                line-height: 1.12 !important;
+                overflow-wrap: anywhere !important;
+            }
+            table {
+                width: 100% !important;
+                font-size: var(--detail-font) !important;
+                border-collapse: collapse !important;
+            }
+            .calc-table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                border-collapse: collapse !important;
+                border-spacing: 0 !important;
+                border: 1px solid #bfc8d4 !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
+                background: #fff !important;
+            }
+            .calc-table th {
+                font-size: var(--detail-head-font) !important;
+                padding: var(--head-pad) 0.7mm !important;
+                line-height: 1.08 !important;
+                border: 1px solid #bfc8d4 !important;
+                background-clip: padding-box !important;
+            }
+            .calc-table td {
+                font-size: var(--detail-font) !important;
+                padding: var(--row-pad) 0.75mm !important;
+                line-height: 1.10 !important;
+                border: 1px solid #bfc8d4 !important;
+                background-clip: padding-box !important;
+            }
+            .calc-table tr[class*="border-t"] > td,
+            .calc-table tr[class*="border-t"] > th,
+            .calc-table td[class*="border-r"],
+            .calc-table th[class*="border-r"] {
+                border-color: #bfc8d4 !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) > div,
+            section.lg\:col-span-7 > div:nth-child(3) .p-2,
+            section.lg\:col-span-7 > div:nth-child(3) .sm\:p-4 {
+                padding-top: 0.55mm !important;
+                padding-bottom: 0.55mm !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) .mt-2 { margin-top: 0.55mm !important; }
+            section.lg\:col-span-7 > div:nth-child(3) .mt-1 { margin-top: 0.35mm !important; }
+            section.lg\:col-span-7 > div:nth-child(3) .gap-2 { gap: 0.7mm !important; }
+
+            section.lg\:col-span-7 > div:nth-child(3) {
+                border: 1px solid #c7cfdb !important;
+                border-radius: 2mm !important;
+                overflow: hidden !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(1),
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(3) {
+                border-bottom: 1px solid #c7cfdb !important;
+                background: #fff !important;
+            }
+            /* Perbesar judul Sumbu, total, dan klasifikasi agar seimbang dengan tabel. */
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(1),
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(3) {
+                padding: 1mm 1.4mm !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) h3 {
+                font-size: 8px !important;
+                line-height: 1.1 !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(1) span,
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(1) div,
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(3) span,
+            section.lg\:col-span-7 > div:nth-child(3) > div:nth-child(3) div {
+                font-size: 7.3px !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) .mt-2.bg-slate-50 {
+                position: relative !important;
+                z-index: auto !important;
+                clear: both !important;
+                min-height: 7mm !important;
+                height: auto !important;
+                margin-top: 0.8mm !important;
+                padding: 1mm 1.5mm !important;
+                overflow: visible !important;
+                border: 1px solid #bfc8d4 !important;
+                border-radius: 1.6mm !important;
+                box-shadow: none !important;
+            }
+            section.lg\:col-span-7 > div:nth-child(3) .mt-2.bg-slate-50 span {
+                font-size: 7.3px !important;
+                line-height: 1.1 !important;
+            }
+
+            tr, .matrix-cell, table {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Footer PDF: bagian tetap dari 1 halaman F4, bukan overlay/fixed. */
+            footer {
+                position: static !important;
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                height: 7.5mm !important;
+                min-height: 7.5mm !important;
+                box-sizing: border-box !important;
+                padding: 0.7mm 0 0 !important;
+                margin: 0 !important;
+                background: #fff !important;
+                border-top: 1px solid #c7cfdb !important;
+                text-align: center !important;
+                overflow: hidden !important;
+            }
+            footer .print-only { display: block !important; visibility: visible !important; }
+            footer .print-only p:first-child {
+                font-size: var(--detail-font) !important;
+                line-height: 1.02 !important;
+                color: #1e293b !important;
+                font-weight: 700 !important;
+                margin: 0 !important;
+            }
+            footer .print-only p:first-child span { color: #d97706 !important; }
+            footer .print-only p:last-child {
+                font-size: 5.7px !important;
+                line-height: 1.02 !important;
+                color: #64748b !important;
+                font-weight: 400 !important;
+                margin: 0.25mm 0 0 !important;
+            }
+
+            * { border-color: #cbd5e1 !important; }
+        }
+</style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased" onload="initApp()">
+
+    <header class="bg-slate-900 text-white border-b-4 border-amber-500 shadow-md sticky top-0 z-40 print:static print:bg-white print:border-b print:border-slate-300 print:shadow-none print:pt-0">
+        <div class="header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4 print:py-1">
+            <div class="header-brand flex items-center gap-3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkeJXJJOgoIILr0iIRsMV9FapZtPJgvM-2ge1Eja0V0w&s=10" alt="Logo" class="header-logo h-12 object-contain print:h-4">
+                <div class="header-copy">
+                    <div class="header-topline flex items-center gap-2">
+                        <h1 class="header-title font-extrabold text-lg sm:text-xl tracking-tight text-white print:text-slate-900">SIM Talent</h1>
+                        <span class="header-badge bg-amber-500/20 text-amber-300 print:bg-slate-100 print:text-slate-600 print:border-slate-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                            Kepka BKN No. 411/2025
+                        </span>
+                    </div>
+                    <p class="header-subtitle text-xs text-slate-300 font-medium hidden sm:block print:text-slate-500">
+                        Simulasi Manajemen Talenta ASN
+                    </p>
+                    <p id="printTimestamp" class="hidden print-only text-slate-500 font-medium"></p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 no-print">
+                <button onclick="resetForm()" class="px-2 py-1.5 sm:px-3 text-[10px] sm:text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-all shadow-sm" title="Reset Data">
+                    <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">Reset Form</span><span class="sm:hidden">Reset</span>
+                </button>
+                <button onclick="printDocument()" class="px-2 py-1.5 sm:px-3 text-[10px] sm:text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition-all shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> <span class="hidden sm:inline">Cetak PDF</span><span class="sm:hidden">Cetak</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 relative print:py-1">
+
+        <!-- LEFT COLUMN: Parameter Input Forms -->
+        <section class="lg:col-span-5 flex flex-col gap-5 no-print h-full">
+            
+            <!-- Employee Profile Input Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="font-bold text-slate-900 flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-user-gear text-blue-600"></i> Profil Pegawai & Pengaturan
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Nama Pegawai</label>
+                        <input type="text" id="asnName" value="IHDIYAT REA BUSTANI, S.STP., M.A.P." oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Jenjang Jabatan</label>
+                        <select id="asnTarget" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                            <optgroup label="Jabatan Pimpinan Tinggi (JPT)">
+                                <option value="Jenjang JPT Utama">JPT Utama</option>
+                                <option value="Jenjang JPT Madya">JPT Madya</option>
+                                <option value="Jenjang JPT Pratama">JPT Pratama</option>
+                            </optgroup>
+                            <optgroup label="Jabatan Administrasi (JA)">
+                                <option value="Jenjang Jabatan Administrator">Jabatan Administrator</option>
+                                <option value="Jenjang Jabatan Pengawas">Jabatan Pengawas</option>
+                                <option value="Jenjang Jabatan Pelaksana">Jabatan Pelaksana</option>
+                            </optgroup>
+                            <optgroup label="Jabatan Fungsional (JF) Keahlian">
+                                <option value="Jenjang JF Ahli Utama">JF Ahli Utama</option>
+                                <option value="Jenjang JF Ahli Madya">JF Ahli Madya</option>
+                                <option value="Jenjang JF Ahli Muda" selected>JF Ahli Muda</option>
+                                <option value="Jenjang JF Ahli Pertama">JF Ahli Pertama</option>
+                            </optgroup>
+                            <optgroup label="Jabatan Fungsional (JF) Keterampilan">
+                                <option value="Jenjang JF Penyelia">JF Penyelia</option>
+                                <option value="Jenjang JF Mahir">JF Mahir</option>
+                                <option value="Jenjang JF Terampil">JF Terampil</option>
+                                <option value="Jenjang JF Pemula">JF Pemula</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block font-medium text-slate-700 mb-1">Instansi / Unit Kerja</label>
+                        <input type="text" id="asnUnit" value="BADAN KEPEGAWAIAN DAERAH" oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kinerja (Sumbu Y) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-900 to-slate-900 p-4 text-white flex justify-between items-center">
+                    <div>
+                        <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-amber-400"></i> KINERJA (SUMBU Y)
+                        </h2>
+                    </div>
+                    <span id="badgeScoreY" class="bg-amber-500 text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap">
+                        Skor Y: 0.00
+                    </span>
+                </div>
+
+                <div class="p-5 space-y-4 text-xs">
+                    <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100">
+                        <label class="font-bold text-slate-900 flex items-center justify-between gap-1.5 mb-1.5">
+                            <span>1. Kinerja Utama 60%</span>
+                            <button title="Penjelasan Indikator" onclick="showInfo('kinerjaUtama')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation fa-lg"></i></button>
+                        </label>
+                        <label class="font-medium text-slate-700 block mb-1">Penilaian Kinerja 60%</label>
+                        <select id="kinerjaUtama" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="100">Sangat Baik (Nilai: 100)</option>
+                            <option value="80" selected>Baik (Nilai: 80)</option>
+                            <option value="60">Butuh Perbaikan (Nilai: 60)</option>
+                            <option value="40">Kurang (Nilai: 40)</option>
+                            <option value="20">Sangat Kurang (Nilai: 20)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3">
+                        <span class="font-bold text-slate-800 block text-xs border-b pb-1">2. Kinerja Penguat 40%</span>
+                        <div>
+                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                                <span>2a. Penghargaan 15%</span>
+                                <button title="Penjelasan Indikator" onclick="showInfo('penghargaan')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            </label>
+                            <select id="penghargaan" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="100">Lingkup Internasional (100)</option>
+                                <option value="75">Lingkup Nasional (75)</option>
+                                <option value="50">Lingkup Lintas Instansi (50)</option>
+                                <option value="25" selected>Lingkup Internal Instansi (25)</option>
+                                <option value="0">Tidak Pernah (0)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                                <span>2b. Penugasan dalam Tim Kerja 15%</span>
+                                <button title="Penjelasan Indikator" onclick="showInfo('timKerja')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            </label>
+                            <select id="timKerja" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="100">Ketua Lintas Instansi (100)</option>
+                                <option value="75" selected>Ketua Internal Instansi (75)</option>
+                                <option value="50">Anggota Lintas Instansi (50)</option>
+                                <option value="25">Anggota Internal Instansi (25)</option>
+                                <option value="0">Tidak Mempunyai Penugasan (0)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                                <span>2c. Umpan Balik Kinerja 360 Derajat 10%</span>
+                                <button title="Penjelasan Indikator" onclick="showInfo('umpanBalik')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            </label>
+                            <select id="umpanBalik" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="100">Sangat Baik (100)</option>
+                                <option value="80" selected>Baik (80)</option>
+                                <option value="60">Butuh Perbaikan (60)</option>
+                                <option value="40">Kurang (40)</option>
+                                <option value="20">Sangat Kurang (20)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Potensial (Sumbu X) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col">
+                <div class="bg-gradient-to-r from-emerald-900 to-slate-900 p-4 text-white flex justify-between items-center">
+                    <div>
+                        <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-brain text-emerald-400"></i> POTENSIAL (SUMBU X)
+                        </h2>
+                    </div>
+                    <span id="badgeScoreX" class="bg-emerald-500 text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap">
+                        Skor X: 0.00
+                    </span>
+                </div>
+
+                <div class="p-5 space-y-4 text-xs">
+                    <div class="border-b pb-3">
+                        <span class="font-bold text-slate-900 block mb-2">1. Kompetensi 40%</span>
+                        <div class="space-y-3 pl-2 border-l-2 border-slate-100">
+                            <div>
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                    <span>1a. Penilaian Kompetensi 20%</span>
+                                    <button title="Penjelasan Indikator" onclick="showInfo('kompetensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="kompetensiScore" step="0.01" min="0" max="100" value="85" oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white font-semibold text-emerald-700">
+                                    <span class="text-xs font-bold text-slate-500">/ 100</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                    <span>1b. Pengembangan Kompetensi 10%</span>
+                                    <button title="Penjelasan Indikator" onclick="showInfo('bangkom')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <select id="sertifikatPelatihan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100">≥ 8 Sertifikat (100)</option>
+                                        <option value="75" selected>6 - 8 Sertifikat (75)</option>
+                                        <option value="50">4 - 6 Sertifikat (50)</option>
+                                        <option value="25">1 - 3 Sertifikat (25)</option>
+                                        <option value="0">0 Sertifikat (0)</option>
+                                    </select>
+                                    <select id="sertifikasiKeahlian" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100">≥ 3 Sertifikasi (100)</option>
+                                        <option value="50" selected>1 - 2 Sertifikasi (50)</option>
+                                        <option value="0">0 Sertifikasi (0)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                    <span>1c. Pengalaman Jabatan 10%</span>
+                                    <button title="Penjelasan Indikator" onclick="showInfo('pengalaman')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                </label>
+                                <div class="space-y-1.5">
+                                    <select id="lamaJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100" selected>Masa Kerja ≥ 5 Thn (100)</option>
+                                        <option value="80">Masa Kerja 3 - 4 Thn (80)</option>
+                                        <option value="60">Masa Kerja &lt; 3 Thn (60)</option>
+                                    </select>
+                                    <select id="keragamanJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100" selected>Lintas Instansi (100)</option>
+                                        <option value="80">Lintas Unit Kerja (80)</option>
+                                        <option value="60">Hanya 1 Unit Kerja (60)</option>
+                                    </select>
+                                    <select id="jabatanNonDefinitif" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100">Pj. Kepala Daerah (100)</option>
+                                        <option value="80">Plt. Jabatan Lebih Tinggi (80)</option>
+                                        <option value="60" selected>Plt. Jabatan Setara (60)</option>
+                                        <option value="40">Plh. Jabatan Lebih Tinggi (40)</option>
+                                        <option value="20">Plh. Jabatan Setara (20)</option>
+                                        <option value="0">Tidak Punya Nondefinitif (0)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Potensi (25%) - Lurus 1 Kolom (8 Indikator) -->
+                    <div class="border-b pb-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-bold text-slate-900 flex items-center gap-1.5">
+                                <span>2. Potensi 25% (Penilaian Potensi 25%)</span>
+                                <button title="Penjelasan Indikator" onclick="showInfo('potensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn ml-1"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            </label>
+                            <span id="potensiTotalLabel" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">31/40</span>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KEMAMPUAN INTELEKTUAL">KEMAMPUAN INTELEKTUAL</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="3" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KECERDASAN EMOSIONAL">KECERDASAN EMOSIONAL</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KESADARAN DIRI">KESADARAN DIRI</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KEMAMPUAN INTERPERSONAL">KEMAMPUAN INTERPERSONAL</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="MOTIVASI DAN KOMITMEN">MOTIVASI DAN KOMITMEN</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="BELAJAR CEPAT & KEMBANGKAN DIRI">BELAJAR CEPAT & KEMBANGKAN DIRI</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="MENYELESAIKAN PERMASALAHAN">MENYELESAIKAN PERMASALAHAN</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
+                                <span class="text-[10px] text-slate-600 truncate mr-2" title="BERPIKIR KRITIS & STRATEGIS">BERPIKIR KRITIS & STRATEGIS</span>
+                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="font-bold text-slate-900 mb-2 block">3. Kualifikasi 20%</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div>
+                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                        <span>3a. Tingkat Pendidikan Formal 10%</span>
+                                        <button title="Penjelasan Indikator" onclick="showInfo('pendidikan')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                    </label>
+                                    <select id="pendidikanFormal" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100">Doktor/S3 (100)</option>
+                                        <option value="90" selected>Magister/S2 (90)</option>
+                                        <option value="80">Sarjana/S1/DIV (80)</option>
+                                        <option value="70">Diploma III (70)</option>
+                                        <option value="60">SLTA/Sederajat (60)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                        <span>3b. Kesesuaian Bidang Ilmu 10%</span>
+                                        <button title="Penjelasan Indikator" onclick="showInfo('kesesuaian')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                    </label>
+                                    <select id="kesesuaianBidang" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                        <option value="100" selected>Ilmu Sesuai (100)</option>
+                                        <option value="50">Tidak Sesuai (50)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-900 mb-2 block">4. Integritas & Moralitas 15%</label>
+                            <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                <span>Verifikasi Rekam Jejak Disiplin 15%</span>
+                                <button title="Penjelasan Indikator" onclick="showInfo('disiplin')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            </label>
+                            <select id="rekamDisiplin" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                <option value="100" selected>Tidak Pernah Hukuman (100)</option>
+                                <option value="75">Hukuman Ringan (75)</option>
+                                <option value="50">Hukuman Sedang (50)</option>
+                                <option value="25">Hukuman Berat (25)</option>
+                                <option value="0">Sedang Dihukum (0)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col gap-4 h-full print:w-full print:block">
+            
+            <!-- Wrapper Print Grid: Summary & 9-Box Matrix side by side -->
+            <div class="grid grid-cols-1 print:grid-cols-2 gap-4 print:gap-3 print:mb-3">
+
+                <!-- Result Summary Overview Card -->
+                <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-800 relative overflow-hidden print:bg-white print:text-black print:border-slate-300 print:shadow-none print:h-full flex flex-col justify-center print:rounded-lg">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-2xl pointer-events-none no-print"></div>
+                    
+                    <div class="result-identity border-b border-slate-800 print:border-slate-200 pb-3 mb-3 print:pb-2 print:mb-2">
+                        <span class="result-title text-[10px] sm:text-xs font-semibold text-amber-400 print:text-slate-500 uppercase tracking-widest">Hasil Pemetaan Simulasi Talenta</span>
+
+                        <div class="result-identity-row flex flex-col sm:flex-row items-start sm:items-stretch justify-between gap-3 mt-1">
+                            <div class="result-person min-w-0 flex-1">
+                                <h2 id="outPegawaiName" class="text-base sm:text-lg font-extrabold text-white print:text-black break-words">NAMA</h2>
+                                <p id="outPegawaiInstansi" class="result-meta text-[10px] sm:text-xs text-slate-400 print:text-slate-600 mt-1">INSTANSI</p>
+                                <p id="outPegawaiTarget" class="result-meta text-[10px] sm:text-xs text-slate-400 print:text-slate-600 mt-0.5">Jenjang Jabatan: -</p>
+                            </div>
+
+                            <div class="result-position bg-slate-800/80 print:bg-slate-50 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-700 print:border-slate-300 text-center shrink-0 w-full sm:w-auto print:rounded-md flex flex-col justify-center">
+                                <span class="text-[9px] text-slate-400 print:text-slate-500 block uppercase font-semibold">Posisi Terpetakan</span>
+                                <span id="outBoxBadge" class="text-lg font-black text-amber-400 print:text-black">KOTAK ?</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-center mb-2">
+                        <div class="bg-slate-800/50 print:bg-white p-1.5 rounded-lg border border-slate-700/50 print:border-slate-200">
+                            <span class="text-[9px] text-slate-400 print:text-slate-500 block">Nilai Kinerja (Sumbu Y)</span>
+                            <span id="outValueY" class="text-base font-bold text-sky-400 print:text-blue-600">0.00</span>
+                        </div>
+                        <div class="bg-slate-800/50 print:bg-white p-1.5 rounded-lg border border-slate-700/50 print:border-slate-200">
+                            <span class="text-[9px] text-slate-400 print:text-slate-500 block">Nilai Potensial (Sumbu X)</span>
+                            <span id="outValueX" class="text-base font-bold text-emerald-400 print:text-green-600">0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 print:bg-white p-2.5 rounded-lg border border-slate-700/50 print:border-slate-200 text-left flex-1">
+                        <span class="text-[9px] text-slate-400 print:text-slate-500 block mb-1.5 uppercase font-bold tracking-wider flex justify-between">
+                            <span>Rekomendasi Tindak Lanjut</span>
+                            <span id="outCategoryBadge" class="text-[8px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-200 print:bg-slate-100 print:text-slate-600 print:border print:border-slate-200">KATEGORI</span>
+                        </span>
+                        <div id="outStatus" class="text-xs sm:text-[13px] font-medium text-amber-300 print:text-slate-800 leading-tight">
+                            -
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matriks 9 Kotak (Presisi style exact match to user request) -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none print:h-full print:p-2 flex flex-col print:rounded-lg">
+                    <div class="mb-2 sm:mb-4 border-b border-slate-100 pb-1 print:mb-2">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2 print:text-[10px]">
+                            <i class="fa-solid fa-border-all text-blue-600"></i> Matriks 9 Kotak
+                        </h3>
+                    </div>
+                    
+                    <div class="flex justify-center items-center w-full flex-1 py-1">
+                        <div class="matrix-shell w-full max-w-[500px] mx-auto flex flex-col items-center">
+                            
+                            <div class="matrix-top-row flex w-full">
+                                <!-- Header Kiri (Kinerja Sumbu Y) -->
+                                <div class="matrix-side-axis w-12 sm:w-20 flex shrink-0 mr-1.5 sm:mr-3">
+                                    <div class="matrix-axis-y-title w-6 sm:w-8 bg-slate-200/80 flex justify-center items-center rounded-l-md border border-slate-300 relative print:bg-slate-200 print:border-slate-400">
+                                        <span class="absolute -rotate-90 whitespace-nowrap text-[8px] sm:text-[11px] font-black tracking-[0.2em] text-slate-700 uppercase print:text-black">KINERJA</span>
+                                    </div>
+                                    <div class="matrix-y-levels flex-1 flex flex-col justify-around text-center py-2">
+                                        <div class="relative flex-1 flex justify-center items-center">
+                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI ATAS<br>EKSPEKTASI</span>
+                                        </div>
+                                        <div class="relative flex-1 flex justify-center items-center">
+                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">SESUAI<br>EKSPEKTASI</span>
+                                        </div>
+                                        <div class="relative flex-1 flex justify-center items-center">
+                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI BAWAH<br>EKSPEKTASI</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Wrapper Grid 9 Kotak -->
+                                <div class="matrix-core-grid flex-1 aspect-square grid grid-cols-3 grid-rows-3 gap-1.5 sm:gap-3 relative z-10">
+                                    <div id="box-4" class="matrix-cell w-full h-full rounded-md border bg-orange-50 border-orange-200 text-orange-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 4</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Atas Ekspektasi & Potensial Rendah</span>
+                                    </div>
+                                    <div id="box-7" class="matrix-cell w-full h-full rounded-md border bg-lime-50 border-lime-200 text-lime-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 7</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Atas Ekspektasi & Potensial Menengah</span>
+                                    </div>
+                                    <div id="box-9" class="matrix-cell w-full h-full rounded-md border bg-emerald-100 border-emerald-300 text-emerald-900 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 9</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Atas Ekspektasi & Potensial Tinggi</span>
+                                    </div>
+
+                                    <div id="box-2" class="matrix-cell w-full h-full rounded-md border bg-slate-50 border-slate-200 text-slate-700 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 2</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Sesuai Ekspektasi & Potensial Rendah</span>
+                                    </div>
+                                    <div id="box-5" class="matrix-cell w-full h-full rounded-md border bg-blue-50 border-blue-200 text-blue-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 5</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Sesuai Ekspektasi & Potensial Menengah</span>
+                                    </div>
+                                    <div id="box-8" class="matrix-cell w-full h-full rounded-md border bg-emerald-50 border-emerald-200 text-emerald-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 8</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Sesuai Ekspektasi & Potensial Tinggi</span>
+                                    </div>
+
+                                    <div id="box-1" class="matrix-cell w-full h-full rounded-md border bg-rose-50 border-rose-200 text-rose-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 1</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Bawah Ekspektasi & Potensial Rendah</span>
+                                    </div>
+                                    <div id="box-3" class="matrix-cell w-full h-full rounded-md border bg-amber-50 border-amber-200 text-amber-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 3</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Bawah Ekspektasi & Potensial Menengah</span>
+                                    </div>
+                                    <div id="box-6" class="matrix-cell w-full h-full rounded-md border bg-sky-50 border-sky-200 text-sky-800 flex flex-col justify-center items-center text-center cursor-default relative p-1">
+                                        <span class="font-black tracking-wide text-[9px] sm:text-[12px]">KOTAK 6</span>
+                                        <span class="font-bold italic opacity-70 px-0.5 text-[6px] sm:text-[8px]">Kinerja Di Bawah Ekspektasi & Potensial Tinggi</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bagian Bawah: Axis Bawah Sumbu X -->
+                            <div class="matrix-bottom-row w-full flex mt-1.5 sm:mt-3">
+                                <div class="matrix-bottom-spacer w-12 sm:w-20 shrink-0 mr-1.5 sm:mr-3"></div> 
+                                
+                                <div class="matrix-bottom-axis flex-1 flex flex-col">
+                                    <div class="matrix-x-levels flex w-full text-center mb-1">
+                                        <div class="w-1/3 flex flex-col justify-start px-1">
+                                            <span class="text-[8px] sm:text-[11px] font-bold text-slate-700 uppercase">RENDAH</span>
+                                            <span class="font-normal text-slate-500 text-[6px] sm:text-[8px]">&lt;60</span>
+                                        </div>
+                                        <div class="w-1/3 flex flex-col justify-start px-1">
+                                            <span class="text-[8px] sm:text-[11px] font-bold text-slate-700 uppercase">MENENGAH</span>
+                                            <span class="font-normal text-slate-500 text-[6px] sm:text-[8px]">≥60 – &lt;80</span>
+                                        </div>
+                                        <div class="w-1/3 flex flex-col justify-start px-1">
+                                            <span class="text-[8px] sm:text-[11px] font-bold text-slate-700 uppercase">TINGGI</span>
+                                            <span class="font-normal text-slate-500 text-[6px] sm:text-[8px]">≥80 – 100</span>
+                                        </div>
+                                    </div>
+                                    <div class="matrix-axis-x-title w-full h-6 sm:h-8 bg-slate-200/80 flex justify-center items-center rounded-b-md border border-slate-300 relative overflow-hidden print:bg-slate-200 print:border-slate-400">
+                                        <span class="text-[8px] sm:text-[11px] font-black tracking-[0.2em] text-slate-700 uppercase print:text-black">POTENSIAL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tabel Kalkulasi Nilai Talenta -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none overflow-hidden mb-1 print:rounded-lg">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-slate-50/80 border-b border-slate-200">
+                            <th class="py-2 px-3 text-left text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wide print:py-1 print:px-2">PEMETAAN KOTAK MANAJEMEN TALENTA</th>
+                            <th class="py-2 px-3 text-center text-[11px] sm:text-xs font-bold text-slate-800 uppercase tracking-wide border-l border-slate-200 w-1/4 sm:w-1/3 print:py-1 print:px-2" id="talentaBoxHeader">KOTAK ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-2 px-3 text-[13px] sm:text-sm text-slate-500 align-top print:py-1 print:px-2 print:text-[7px]">
+                                <p class="mb-1"><strong class="text-slate-800">Nilai Talenta =</strong> (50% &times; Nilai Sumbu Potensial) + (50% &times; Nilai Sumbu Kinerja)</p>
+                                <p id="talentaCalc1" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= (50% &times; 0.00) + (50% &times; 0.00)</p>
+                                <p id="talentaCalc2" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= 0.00 + 0.00</p>
+                            </td>
+                            <td class="py-2 px-3 text-center align-middle border-l border-slate-200 print:py-1 print:px-2">
+                                <span id="talentaFinalScore" class="inline-block bg-[#2ea2db] text-white font-extrabold text-base sm:text-xl px-3 py-1 sm:px-6 sm:py-2.5 rounded-md shadow-sm tracking-wide">0.00</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Kalkulasi Rinci Table Sumbu Y & X -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none flex-1 flex flex-col print:rounded-lg">
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 p-2 sm:p-4">
+                    <div class="flex items-center gap-2 mb-1 sm:mb-0">
+                        <span class="bg-sky-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">Sumbu Y</span>
+                        <h3 class="font-semibold text-slate-700 text-xs">KINERJA (Y)</h3>
+                    </div>
+                    <div class="text-[10px] text-slate-500">
+                        Total Bobot: <span id="headerTotalY" class="font-bold text-slate-800">0.00</span>
+                    </div>
+                </div>
+
+                <div class="p-2 sm:p-4 overflow-x-auto">
+                    <table class="calc-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">KOMPONEN</th>
+                                <th style="width: 10%;">%</th>
+                                <th style="width: 35%;">INDIKATOR</th>
+                                <th style="width: 10%;">%</th>
+                                <th style="width: 10%;">NILAI</th>
+                                <th style="width: 10%;">TERBOBOT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyY">
+                        </tbody>
+                    </table>
+                    
+                    <div class="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-2 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-slate-700">Total Nilai Sumbu Kinerja (Y):</span>
+                            <span id="footerTotalY" class="bg-sky-500 text-white font-bold px-2 py-0.5 rounded text-xs shadow-sm">0.00</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-slate-600">
+                            <span class="font-semibold">Klasifikasi:</span>
+                            <span id="klasifikasiY" class="px-2 py-0.5 rounded font-bold text-white shadow-sm bg-slate-400">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 border-t-4 sm:border-t-8 border-t-slate-100 p-2 sm:p-4 mt-1 sm:mt-2">
+                    <div class="flex items-center gap-2 mb-1 sm:mb-0">
+                        <span class="bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">Sumbu X</span>
+                        <h3 class="font-semibold text-slate-700 text-xs">POTENSIAL (X)</h3>
+                    </div>
+                    <div class="text-[10px] text-slate-500">
+                        Total Bobot: <span id="headerTotalX" class="font-bold text-slate-800">0.00</span>
+                    </div>
+                </div>
+
+                <div class="p-2 sm:p-4 overflow-x-auto">
+                    <table class="calc-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">KOMPONEN</th>
+                                <th style="width: 10%;">%</th>
+                                <th style="width: 35%;">INDIKATOR</th>
+                                <th style="width: 10%;">%</th>
+                                <th style="width: 10%;">NILAI</th>
+                                <th style="width: 10%;">TERBOBOT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyX">
+                        </tbody>
+                    </table>
+
+                    <div class="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-2 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-slate-700">Total Nilai Sumbu Potensial (X):</span>
+                            <span id="footerTotalX" class="bg-emerald-500 text-white font-bold px-2 py-0.5 rounded text-xs shadow-sm">0.00</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-slate-600">
+                            <span class="font-semibold">Klasifikasi:</span>
+                            <span id="klasifikasiX" class="px-2 py-0.5 rounded font-bold text-white shadow-sm bg-slate-400">-</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-auto py-4 border-t-4 border-amber-500 bg-slate-900 text-center text-white shadow-lg print:border-amber-600">
+        <p class="text-xs font-bold text-slate-200 no-print">© 2026 Dyat23 BKD Provinsi NTB &bull; <span class="text-amber-400 font-extrabold">SIM Talent v2.0</span></p>
+        <p class="text-[11px] text-slate-400 mt-1 no-print">Simulasi Manajemen Talenta ASN Berdasarkan Kepka BKN No. 411/2025</p>
+        
+        <!-- Footer khusus PDF/cetak -->
+        <div class="hidden print-only">
+            <p>© 2026 Dyat23 BKD Provinsi NTB &bull; <span>SIM Talent v2.0</span></p>
+            <p>Simulasi Manajemen Talenta ASN Berdasarkan Kepka BKN No. 411/2025</p>
+        </div>
+    </footer>
+
+    <!-- Modal Informasi Indikator -->
+    <div id="infoModal" onclick="closeInfo()" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="infoModalContent" onclick="event.stopPropagation()">
+            <div class="bg-amber-500 p-4 flex justify-between items-center rounded-t-2xl border-b-4 border-amber-600">
+                <h3 id="modalTitle" class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info"></i> Informasi Indikator
+                </h3>
+                <button onclick="closeInfo()" class="text-slate-900 hover:text-white transition-colors bg-white/20 hover:bg-black/20 rounded-lg w-8 h-8 flex justify-center items-center">
+                    <i class="fa-solid fa-xmark fa-lg"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1 space-y-5 text-sm text-slate-700 bg-slate-50">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-blue-700 flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                        <i class="fa-solid fa-filter"></i> Batasan
+                    </h4>
+                    <p id="modalBatasan" class="leading-relaxed"></p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-emerald-700 flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                        <i class="fa-solid fa-database"></i> Sumber Data
+                    </h4>
+                    <p id="modalSumber" class="leading-relaxed"></p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-amber-700 flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                        <i class="fa-solid fa-ruler-combined"></i> Cara Pengukuran
+                    </h4>
+                    <p id="modalPengukuran" class="leading-relaxed"></p>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-white rounded-b-2xl text-right">
+                <button onclick="closeInfo()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-colors shadow-sm">Mengerti, Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function initApp() {
+            calculateTalentScore();
+            updatePrintTimestamp();
+            window.addEventListener('beforeprint', () => {
+                updatePrintTimestamp();
+                fitPrintToSinglePage();
+            });
+            window.addEventListener('afterprint', resetPrintScale);
+        }
+
+        function updatePrintTimestamp() {
+            const timestamp = document.getElementById('printTimestamp');
+            if (!timestamp) return;
+
+            const formattedDateTime = new Intl.DateTimeFormat('id-ID', {
+                weekday: 'long',
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(new Date());
+
+            timestamp.textContent = `Dicetak pada: ${formattedDateTime}`;
+        }
+
+        function resetPrintScale() {
+            const root = document.documentElement;
+            root.style.setProperty('--print-scale', '1');
+            root.style.setProperty('--row-pad', '0.85mm');
+            root.style.setProperty('--head-pad', '0.65mm');
+            root.style.setProperty('--detail-font', '7.4px');
+            root.style.setProperty('--detail-head-font', '7px');
+        }
+
+        function fitPrintToSinglePage() {
+            const root = document.documentElement;
+            const main = document.querySelector('main');
+            const resultSection = document.querySelector('section.lg\\:col-span-7');
+            if (!main || !resultSection) return;
+
+            const mainStyle = window.getComputedStyle(main);
+            const paddingBottom = parseFloat(mainStyle.paddingBottom) || 0;
+            // Sisakan guard kecil sebelum zona footer agar tidak pernah bersentuhan.
+            const availableHeight = main.clientHeight - paddingBottom - 4;
+            if (!availableHeight) return;
+
+            const measuredHeight = () => Math.max(resultSection.scrollHeight, resultSection.offsetHeight);
+
+            // Guard khusus tabel rinci: kotak Total Y/X tidak boleh pernah menyentuh
+            // atau menimpa baris terakhir tabel di atasnya.
+            const hasTableSummaryOverlap = () => {
+                const pairs = [
+                    ['tableBodyY', 'footerTotalY'],
+                    ['tableBodyX', 'footerTotalX']
+                ];
+                return pairs.some(([bodyId, totalId]) => {
+                    const tbody = document.getElementById(bodyId);
+                    const totalBadge = document.getElementById(totalId);
+                    if (!tbody || !totalBadge) return false;
+                    const lastRow = tbody.querySelector('tr:last-child');
+                    const totalBox = totalBadge.closest('.mt-2');
+                    if (!lastRow || !totalBox) return false;
+                    const rowRect = lastRow.getBoundingClientRect();
+                    const totalRect = totalBox.getBoundingClientRect();
+                    return rowRect.bottom > (totalRect.top - 0.5);
+                });
+            };
+
+            // Tahap 1: jangan zoom halaman. Gunakan ruang kosong untuk MEMPERBESAR
+            // teks tabel dan tinggi setiap baris. Ini membuat halaman terlihat penuh.
+            root.style.setProperty('--print-scale', '1');
+
+            const applyGrow = (grow) => {
+                const rowPad = 0.85 + grow;
+                const headPad = 0.65 + (grow * 0.55);
+                const font = 7.4 + Math.min(grow, 2.2) * 0.72;
+                const headFont = 7.0 + Math.min(grow, 2.2) * 0.62;
+                root.style.setProperty('--row-pad', `${rowPad.toFixed(3)}mm`);
+                root.style.setProperty('--head-pad', `${headPad.toFixed(3)}mm`);
+                root.style.setProperty('--detail-font', `${font.toFixed(2)}px`);
+                root.style.setProperty('--detail-head-font', `${headFont.toFixed(2)}px`);
+                void resultSection.offsetHeight;
+                return { height: measuredHeight(), overlap: hasTableSummaryOverlap() };
+            };
+
+            // Cari penambahan tinggi baris terbesar yang masih muat.
+            let growLow = 0;
+            let growHigh = 3.4;
+            let baseState = applyGrow(growLow);
+
+            if (baseState.height <= availableHeight && !baseState.overlap) {
+                for (let i = 0; i < 20; i++) {
+                    const mid = (growLow + growHigh) / 2;
+                    const state = applyGrow(mid);
+                    if (state.height <= availableHeight && !state.overlap) growLow = mid;
+                    else growHigh = mid;
+                }
+                // Sedikit buffer antarmesin cetak/browser.
+                applyGrow(Math.max(0, growLow - 0.08));
+                return;
+            }
+
+            // Tahap 2 (fallback data ekstrem): bila pada ukuran minimum pun isi terlalu
+            // panjang, baru seluruh blok diperkecil secara proporsional agar tetap 1 F4.
+            applyGrow(0);
+            const fitsScale = (scale) => {
+                root.style.setProperty('--print-scale', String(scale));
+                void resultSection.offsetHeight;
+                return measuredHeight() * scale <= availableHeight && !hasTableSummaryOverlap();
+            };
+
+            let low = 0.45;
+            let high = 1;
+            while (!fitsScale(low) && low > 0.06) low *= 0.82;
+            for (let i = 0; i < 20; i++) {
+                const mid = (low + high) / 2;
+                if (fitsScale(mid)) low = mid;
+                else high = mid;
+            }
+            root.style.setProperty('--print-scale', String(Math.max(0.05, low * 0.988)));
+        }
+        function printDocument() {
+            updatePrintTimestamp();
+            // beforeprint akan menghitung ulang skala memakai layout media print aktual.
+            window.print();
+        }
+
+        function calculateTalentScore() {
+            const name = document.getElementById('asnName').value || '-';
+            const unit = document.getElementById('asnUnit').value || '-';
+            const target = document.getElementById('asnTarget').value || '-';
+            document.getElementById('outPegawaiName').innerText = name.toUpperCase();
+            document.getElementById('outPegawaiInstansi').innerText = unit.toUpperCase();
+            document.getElementById('outPegawaiTarget').innerText = `Jenjang Jabatan: ${target}`;
+
+            // --- SUMBU Y ---
+            const rawKinerjaUtama = parseFloat(document.getElementById('kinerjaUtama').value) || 0;
+            const wKinerjaUtama = rawKinerjaUtama * 0.60;
+
+            const rawPenghargaan = parseFloat(document.getElementById('penghargaan').value) || 0;
+            const wPenghargaan = rawPenghargaan * 0.15;
+
+            const rawTimKerja = parseFloat(document.getElementById('timKerja').value) || 0;
+            const wTimKerja = rawTimKerja * 0.15;
+
+            const rawUmpanBalik = parseFloat(document.getElementById('umpanBalik').value) || 0;
+            const wUmpanBalik = rawUmpanBalik * 0.10;
+
+            const scoreY = (wKinerjaUtama + wPenghargaan + wTimKerja + wUmpanBalik).toFixed(2);
+            const numScoreY = parseFloat(scoreY);
+
+            // --- SUMBU X ---
+            let rawPenilaianKomp = parseFloat(document.getElementById('kompetensiScore').value) || 0;
+            if (rawPenilaianKomp > 100) rawPenilaianKomp = 100;
+            const wPenilaianKomp = rawPenilaianKomp * 0.20;
+
+            const vPelatihan = parseFloat(document.getElementById('sertifikatPelatihan').value) || 0;
+            const vSertifikasi = parseFloat(document.getElementById('sertifikasiKeahlian').value) || 0;
+            const rawBangkom = (vPelatihan + vSertifikasi) / 2;
+            const wBangkom = rawBangkom * 0.10;
+
+            const vLamaJab = parseFloat(document.getElementById('lamaJabatan').value) || 0;
+            const vRagamJab = parseFloat(document.getElementById('keragamanJabatan').value) || 0;
+            const vNonDef = parseFloat(document.getElementById('jabatanNonDefinitif').value) || 0;
+            const rawPengalaman = (vLamaJab + vRagamJab + vNonDef) / 3;
+            const wPengalaman = rawPengalaman * 0.10;
+
+            const potensiInputs = document.querySelectorAll('.potensi-input');
+            let sumPotensiRaw = 0;
+            potensiInputs.forEach(input => {
+                let val = parseFloat(input.value) || 0;
+                if(val > 5) val = 5;
+                sumPotensiRaw += val;
+            });
+            document.getElementById('potensiTotalLabel').innerText = `${sumPotensiRaw}/40`;
+            const rawPotensiScale100 = (sumPotensiRaw / 40) * 100;
+            const wPotensi = rawPotensiScale100 * 0.25;
+
+            const rawPendidikan = parseFloat(document.getElementById('pendidikanFormal').value) || 0;
+            const wPendidikan = rawPendidikan * 0.10;
+            
+            const rawKesesuaian = parseFloat(document.getElementById('kesesuaianBidang').value) || 0;
+            const wKesesuaian = rawKesesuaian * 0.10;
+
+            const rawDisiplin = parseFloat(document.getElementById('rekamDisiplin').value) || 0;
+            const wDisiplin = rawDisiplin * 0.15;
+
+            const scoreX = (wPenilaianKomp + wBangkom + wPengalaman + wPotensi + wPendidikan + wKesesuaian + wDisiplin).toFixed(2);
+            const numScoreX = parseFloat(scoreX);
+
+            // --- 9-BOX LOGIC & REKOMENDASI ---
+            let boxNumber = 0;
+            let kategoriMap = "";
+            let classKinerja = "";
+            let classPotensi = "";
+
+            if (numScoreY >= 80) { 
+                classKinerja = "Di Atas Ekspektasi";
+                if(numScoreX >= 80) { boxNumber = 9; classPotensi = "Potensial Tinggi"; }
+                else if(numScoreX >= 60) { boxNumber = 7; classPotensi = "Potensial Menengah"; }
+                else { boxNumber = 4; classPotensi = "Potensial Rendah"; }
+            } 
+            else if (numScoreY >= 60) { 
+                classKinerja = "Sesuai Ekspektasi";
+                if(numScoreX >= 80) { boxNumber = 8; classPotensi = "Potensial Tinggi"; }
+                else if(numScoreX >= 60) { boxNumber = 5; classPotensi = "Potensial Menengah"; }
+                else { boxNumber = 2; classPotensi = "Potensial Rendah"; }
+            } 
+            else { 
+                classKinerja = "Di Bawah Ekspektasi";
+                if(numScoreX >= 80) { boxNumber = 6; classPotensi = "Potensial Tinggi"; }
+                else if(numScoreX >= 60) { boxNumber = 3; classPotensi = "Potensial Menengah"; }
+                else { boxNumber = 1; classPotensi = "Potensial Rendah"; }
+            }
+            
+            kategoriMap = `Kinerja ${classKinerja.toLowerCase()} dan ${classPotensi.toLowerCase()}`;
+
+            document.getElementById('badgeScoreY').innerText = `Skor Y: ${scoreY}`;
+            document.getElementById('badgeScoreX').innerText = `Skor X: ${scoreX}`;
+            document.getElementById('outValueY').innerText = scoreY;
+            document.getElementById('outValueX').innerText = scoreX;
+            document.getElementById('outBoxBadge').innerText = `KOTAK ${boxNumber}`;
+            document.getElementById('outCategoryBadge').innerText = kategoriMap.toUpperCase();
+            
+            const statusMap = {
+                9: ['Dipromosikan dan dipertahankan', 'Masuk Kelompok Rencana Suksesi Instansi/Nasional', 'Penghargaan', 'Penugasan strategis lintas instansi', 'Pelatihan eksekutif (executive coaching) dan pengembangan kepemimpinan (leadership development) lanjutan', 'Pelibatan dalam proyek nasional prioritas'],
+                8: ['Dipertahankan', 'Masuk Kelompok Rencana Suksesi Instansi', 'Rotasi/Perluasan Jabatan di unit strategis', 'Bimbingan peningkatan motivasi kerja', 'mentoring oleh pejabat senior', 'Penugasan sebagai penanggung jawab (person in charge) proyek lintas bidang'],
+                7: ['Dipertahankan', 'Masuk Kelompok Rencana Suksesi Instansi', 'Rotasi/Pengayaan jabatan untuk memperluas perspektif jabatan', 'pelatihan kompetensi sesuai gap kompetensi', 'Penugasan memimpin tim kerja/kelompok kerja'],
+                6: ['Penempatan ulang yang sesuai kekuatan kompetensi dan minat (role realignment)', 'Bimbingan kinerja untuk perbaikan kinerja', 'Konseling kinerja', 'Pengembangan kompetensi', 'Monitoring kinerja intensif'],
+                5: ['Penempatan ulang yang sesuai kekuatan kompetensi dan minat melalui rotasi (role realignment)', 'Bimbingan peningkatan motivasi kerja', 'Pengembangan kompetensi teknis berdasarkan kebutuhan jabatan'],
+                4: ['Rotasi untuk memperluas keahlian', 'Pengembangan kompetensi'],
+                3: ['Bimbingan peningkatan kinerja intensif', 'Konseling kinerja, motivasi, dan analisis penyebab penurunan kinerja', 'Pengembangan kompetensi', 'Penempatan yang sesuai', 'Penyesuaian beban kerja atau tim', 'Monitoring perbaikan kinerja'],
+                2: ['Bimbingan peningkatan kinerja', 'Pengembangan kompetensi rutin sesuai standar jabatan', 'Penempatan yang sesuai untuk penyegaran'],
+                1: ['perbaikan kinerja intensif selama 3 (tiga) sampai dengan 6 (enam) bulan', 'Pelatihan (coaching) wajib', 'Pelatihan untuk pengembangan kompetensi', 'Diproses sesuai dengan ketentuan peraturan perundang-undangan jika tidak ada perbaikan']
+            };
+            
+            let statusHtml = '<ol class="list-decimal pl-4 space-y-1 m-0 text-sm print:text-[8px]">';
+            statusMap[boxNumber].forEach(item => {
+                statusHtml += `<li>${item}</li>`;
+            });
+            statusHtml += '</ol>';
+            document.getElementById('outStatus').innerHTML = statusHtml;
+
+            const halfX = (numScoreX * 0.5).toFixed(2);
+            const halfY = (numScoreY * 0.5).toFixed(2);
+            const finalScore = (parseFloat(halfX) + parseFloat(halfY)).toFixed(2);
+
+            document.getElementById('talentaBoxHeader').innerText = `KOTAK ${boxNumber}`;
+            document.getElementById('talentaCalc1').innerHTML = `= (50% &times; ${scoreX}) + (50% &times; ${scoreY})`;
+            document.getElementById('talentaCalc2').innerText = `= ${halfX} + ${halfY}`;
+            document.getElementById('talentaFinalScore').innerText = finalScore;
+
+            // Matrix Grid Active Box Styling
+            document.querySelectorAll('.matrix-cell').forEach(cell => {
+                cell.classList.remove('grid-box-active');
+                cell.style.opacity = '0.35'; 
+                cell.style.filter = 'grayscale(80%)'; 
+            });
+            const activeCell = document.getElementById(`box-${boxNumber}`);
+            if(activeCell) {
+                activeCell.classList.add('grid-box-active');
+                activeCell.style.opacity = '1';
+                activeCell.style.filter = 'grayscale(0%)';
+            }
+
+            const formatVal = (val) => Number(val).toFixed(2);
+            
+            const getRowClass = (val, maxWeight) => {
+                const percent = val / maxWeight;
+                if (percent >= 0.8) return 'row-green';
+                if (percent >= 0.6) return 'row-orange';
+                return 'row-red';
+            };
+
+            const getKlasifikasiColor = (val) => {
+                if(val >= 80) return 'bg-emerald-500 text-white';
+                if(val >= 60) return 'bg-amber-500 text-white';
+                return 'bg-rose-500 text-white';
+            }
+
+            const tbodyY = document.getElementById('tableBodyY');
+            tbodyY.innerHTML = `
+                <tr class="${getRowClass(wKinerjaUtama, 60)}">
+                    <td class="font-semibold">Kinerja Utama</td>
+                    <td class="text-center">60%</td>
+                    <td>Penilaian Kinerja</td>
+                    <td class="text-center">60%</td>
+                    <td class="text-center">${formatVal(rawKinerjaUtama)}</td>
+                    <td class="text-center font-bold">${formatVal(wKinerjaUtama)}</td>
+                </tr>
+                <tr class="${getRowClass(wPenghargaan, 15)} border-t border-t-white">
+                    <td rowspan="3" class="font-semibold bg-white text-slate-700">Kinerja Penguat</td>
+                    <td rowspan="3" class="text-center bg-white text-slate-700 border-r border-r-slate-200">40%</td>
+                    <td>Penghargaan</td>
+                    <td class="text-center">15%</td>
+                    <td class="text-center">${formatVal(rawPenghargaan)}</td>
+                    <td class="text-center font-bold">${formatVal(wPenghargaan)}</td>
+                </tr>
+                <tr class="${getRowClass(wTimKerja, 15)} border-t border-t-white">
+                    <td>Penugasan dalam Tim Kerja</td>
+                    <td class="text-center">15%</td>
+                    <td class="text-center">${formatVal(rawTimKerja)}</td>
+                    <td class="text-center font-bold">${formatVal(wTimKerja)}</td>
+                </tr>
+                <tr class="${getRowClass(wUmpanBalik, 10)} border-t border-t-white">
+                    <td>Umpan Balik Kinerja 360</td>
+                    <td class="text-center">10%</td>
+                    <td class="text-center">${formatVal(rawUmpanBalik)}</td>
+                    <td class="text-center font-bold">${formatVal(wUmpanBalik)}</td>
+                </tr>
+            `;
+
+            document.getElementById('headerTotalY').innerText = scoreY;
+            document.getElementById('footerTotalY').innerText = scoreY;
+            
+            const klasifikasiYEl = document.getElementById('klasifikasiY');
+            klasifikasiYEl.innerText = classKinerja;
+            klasifikasiYEl.className = `px-2 py-0.5 rounded font-bold text-white shadow-sm text-xs print:text-[8px] ${getKlasifikasiColor(numScoreY)}`;
+
+            const tbodyX = document.getElementById('tableBodyX');
+            tbodyX.innerHTML = `
+                <tr class="${getRowClass(wPenilaianKomp, 20)} border-t border-t-white">
+                    <td rowspan="3" class="font-semibold bg-white text-slate-700">Kompetensi</td>
+                    <td rowspan="3" class="text-center bg-white text-slate-700 border-r border-r-slate-200">40%</td>
+                    <td>Penilaian Kompetensi</td>
+                    <td class="text-center">20%</td>
+                    <td class="text-center">${formatVal(rawPenilaianKomp)}</td>
+                    <td class="text-center font-bold">${formatVal(wPenilaianKomp)}</td>
+                </tr>
+                <tr class="${getRowClass(wBangkom, 10)} border-t border-t-white">
+                    <td>Pengembangan Kompetensi</td>
+                    <td class="text-center">10%</td>
+                    <td class="text-center">${formatVal(rawBangkom)}</td>
+                    <td class="text-center font-bold">${formatVal(wBangkom)}</td>
+                </tr>
+                <tr class="${getRowClass(wPengalaman, 10)} border-t border-t-white">
+                    <td>Pengalaman Jabatan</td>
+                    <td class="text-center">10%</td>
+                    <td class="text-center">${formatVal(rawPengalaman)}</td>
+                    <td class="text-center font-bold">${formatVal(wPengalaman)}</td>
+                </tr>
+                <tr class="${getRowClass(wPotensi, 25)} border-t border-t-white">
+                    <td class="font-semibold bg-white text-slate-700">Potensi</td>
+                    <td class="text-center bg-white text-slate-700 border-r border-r-slate-200">25%</td>
+                    <td>Penilaian Potensi</td>
+                    <td class="text-center">25%</td>
+                    <td class="text-center">${formatVal(rawPotensiScale100)}</td>
+                    <td class="text-center font-bold">${formatVal(wPotensi)}</td>
+                </tr>
+                <tr class="${getRowClass(wPendidikan, 10)} border-t border-t-white">
+                    <td rowspan="2" class="font-semibold bg-white text-slate-700">Kualifikasi</td>
+                    <td rowspan="2" class="text-center bg-white text-slate-700 border-r border-r-slate-200">20%</td>
+                    <td>Tingkat Pendidikan Formal</td>
+                    <td class="text-center">10%</td>
+                    <td class="text-center">${formatVal(rawPendidikan)}</td>
+                    <td class="text-center font-bold">${formatVal(wPendidikan)}</td>
+                </tr>
+                <tr class="${getRowClass(wKesesuaian, 10)} border-t border-t-white">
+                    <td>Kesesuaian Bidang Ilmu</td>
+                    <td class="text-center">10%</td>
+                    <td class="text-center">${formatVal(rawKesesuaian)}</td>
+                    <td class="text-center font-bold">${formatVal(wKesesuaian)}</td>
+                </tr>
+                <tr class="${getRowClass(wDisiplin, 15)} border-t border-t-white">
+                    <td class="font-semibold bg-white text-slate-700">Integritas & Moralitas</td>
+                    <td class="text-center bg-white text-slate-700 border-r border-r-slate-200">15%</td>
+                    <td>Verifikasi Rekam Jejak Disiplin</td>
+                    <td class="text-center">15%</td>
+                    <td class="text-center">${formatVal(rawDisiplin)}</td>
+                    <td class="text-center font-bold">${formatVal(wDisiplin)}</td>
+                </tr>
+            `;
+
+            document.getElementById('headerTotalX').innerText = scoreX;
+            document.getElementById('footerTotalX').innerText = scoreX;
+
+            const klasifikasiXEl = document.getElementById('klasifikasiX');
+            klasifikasiXEl.innerText = classPotensi;
+            klasifikasiXEl.className = `px-2 py-0.5 rounded font-bold text-white shadow-sm text-xs print:text-[8px] ${getKlasifikasiColor(numScoreX)}`;
+        }
+
+        function setSelectValue(id, value) { const el = document.getElementById(id); if(el) el.value = value; }
+
+        function resetForm() {
+            setSelectValue('kinerjaUtama', '80'); setSelectValue('penghargaan', '25'); setSelectValue('timKerja', '75'); setSelectValue('umpanBalik', '80');
+            document.getElementById('kompetensiScore').value = 85;
+            setSelectValue('sertifikatPelatihan', '75'); setSelectValue('sertifikasiKeahlian', '50');
+            setSelectValue('lamaJabatan', '100'); setSelectValue('keragamanJabatan', '100'); setSelectValue('jabatanNonDefinitif', '60');
+            const defaultPotensi = [3, 4, 4, 4, 4, 4, 4, 4];
+            document.querySelectorAll('.potensi-input').forEach((input, index) => {
+                if(index < defaultPotensi.length) input.value = defaultPotensi[index];
+            });
+            setSelectValue('pendidikanFormal', '90'); setSelectValue('kesesuaianBidang', '100'); setSelectValue('rekamDisiplin', '100');
+            document.getElementById('asnName').value = 'IHDIYAT REA BUSTANI, S.STP., M.A.P.';
+            calculateTalentScore();
+        }
+
+        const infoData = {
+            kinerjaUtama: { title: "1. Kinerja Utama", batasan: "Penilaian Kinerja merupakan hasil evaluasi kinerja tahunan pegawai ASN yang terdiri atas hasil kerja dan perilaku kerja.", sumber: "Predikat kinerja hasil evaluasi kinerja pegawai ASN dalam layanan e-Kinerja pada ASN Digital.", pengukuran: "Berdasarkan predikat kinerja yang dikonversikan ke dalam angka (Sangat Baik: 100, Baik: 80, Butuh Perbaikan: 60, Kurang: 40, Sangat Kurang: 20)." },
+            penghargaan: { title: "2a. Penghargaan", batasan: "Penghargaan adalah pengakuan resmi atau formal yang terima oleh ASN atas prestasinya dalam hal capaian kinerja.", sumber: "Piagam/sertifikat penghargaan/tanda apresiasi lainnya yang dapat membuktikan lingkup prestasi yang diraih serta pemberi penghargaan/riwayat penghargaan dalam SIASN.", pengukuran: "Berdasarkan lingkup penghargaan atas prestasi pegawai ASN selama 5 (lima) tahun terakhir (Internasional: 100, Nasional: 75, Lintas Instansi: 50, Internal: 25, Tidak Pernah: 0)." },
+            timKerja: { title: "2b. Penugasan dalam Tim Kerja", batasan: "Penugasan dalam Tim Kerja adalah kedudukan pegawai ASN secara resmi di dalam tim kerja untuk menyelenggarakan tugas-tugas kedinasan dalam rangka mendukung kinerja instansi.", sumber: "Surat keputusan/perintah penugasan, riwayat penugasan dalam tim kerja di layanan e-Kinerja ASN Digital.", pengukuran: "Berdasarkan kedudukan tertinggi yang pernah ditugaskan kepada seorang pegawai ASN dalam kurun waktu 2 tahun terakhir (Ketua Lintas: 100, Ketua Internal: 75, Anggota Lintas: 50, Anggota Internal: 25)." },
+            umpanBalik: { title: "2c. Umpan Balik Kinerja 360 Derajat", batasan: "Umpan balik 360 derajat merupakan penilaian atas perilaku pegawai ASN oleh atasan, rekan sejawat dan/atau bawahan.", sumber: "Hasil penilaian umpan balik 360 derajat seorang pegawai ASN.", pengukuran: "Berdasarkan hasil penilaian umpan balik 360 derajat yang dikonversikan ke dalam angka (Sangat Baik: 100, Baik: 80, Butuh Perbaikan: 60, Kurang: 40, Sangat Kurang: 20)." },
+            kompetensi: { title: "1a. Penilaian Kompetensi", batasan: "Penilaian kompetensi adalah suatu proses membandingkan kompetensi yang dimiliki oleh pegawai ASN dengan standar kompetensi jabatan.", sumber: "Hasil penilaian kompetensi (Assessment) pegawai.", pengukuran: "Penilaian kompetensi dikonversi ke dalam angka nominal skala 0-100." },
+            bangkom: { title: "1b. Pengembangan Kompetensi", batasan: "Pengembangan Kompetensi adalah upaya pemenuhan kebutuhan kompetensi pegawai ASN agar sesuai dengan Standar Kompetensi Jabatan.", sumber: "Riwayat pelatihan dan pengembangan kompetensi dibuktikan dengan sertifikat kepesertaan/kompetensi.", pengukuran: "Menghitung nilai rata-rata riwayat pelatihan dan pengembangan kompetensi selama 3 tahun terakhir sesuai tabel bobot." },
+            pengalaman: { title: "1c. Pengalaman Jabatan", batasan: "Pengalaman Jabatan adalah unsur pengalaman pegawai ASN dalam menduduki jabatan.", sumber: "Riwayat Jabatan.", pengukuran: "Diukur dengan rata-rata nilai indikator lama jabatan, keragaman riwayat, dan penugasan nondefinitif." },
+            potensi: { title: "2. Potensi (Penilaian Potensi)", batasan: "Penilaian Potensi adalah proses membandingkan potensi yang dimiliki pegawai ASN dengan standar potensi berdasarkan 8 indikator spesifik (Kemampuan Intelektual, Kecerdasan Emosional, dll).", sumber: "Hasil penilaian potensi pegawai dari asesmen (Assessment Center) psikologi.", pengukuran: "Masing-masing dari 8 indikator dinilai skala 0-5. Total skor maksimal 40. Kemudian dikonversi menjadi persentase skala 0-100%." },
+            pendidikan: { title: "3a. Tingkat Pendidikan Formal", batasan: "Tingkat Pendidikan Formal adalah jenjang pendidikan formal terakhir yang telah selesai ditempuh oleh pegawai ASN.", sumber: "Ijazah terakhir/riwayat pendidikan formal.", pengukuran: "Melihat jenjang pendidikan formal terakhir (Doktor: 100, Magister: 90, Sarjana: 80, DIII: 70, SLTA: 60)." },
+            kesesuaian: { title: "3b. Kesesuaian Bidang Ilmu", batasan: "Kesesuaian Bidang Ilmu adalah keterkaitan bidang ilmu yang dimiliki pegawai dengan rumpun jabatan target.", sumber: "Ijazah/riwayat pendidikan formal.", pengukuran: "Melihat kesesuaian bidang ilmu dalam riwayat pendidikan pegawai ASN dengan rumpun jabatan target (Sesuai: 100, Tidak Sesuai: 50)." },
+            disiplin: { title: "4. Integritas dan Moralitas (Disiplin)", batasan: "Verifikasi Rekam Jejak Disiplin adalah proses memastikan kepatuhan pegawai terhadap peraturan disiplin.", sumber: "Riwayat hukuman disiplin/Surat Keputusan Penjatuhan Hukuman Disiplin.", pengukuran: "Mengecek riwayat hukuman disiplin dalam 5 tahun terakhir (Tidak Pernah: 100, Ringan: 75, Sedang: 50, Berat: 25, Sedang Dihukum: 0)." }
+        };
+
+        function showInfo(key) {
+            const data = infoData[key];
+            if(!data) return;
+            
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info"></i> ${data.title}`;
+            document.getElementById('modalBatasan').innerText = data.batasan;
+            document.getElementById('modalSumber').innerText = data.sumber;
+            document.getElementById('modalPengukuran').innerText = data.pengukuran;
+            
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('infoModalContent');
+            
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }
+
+        function closeInfo() {
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('infoModalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>

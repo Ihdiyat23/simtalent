@@ -35,7 +35,19 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .header-logo { display: block; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important; }
+        .header-logo {
+            display: block;
+            background: rgba(255,255,255,0.98);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 16px;
+            padding: 6px;
+            box-shadow: 0 8px 18px rgba(2, 6, 23, 0.22), inset 0 1px 0 rgba(255,255,255,0.55);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .header-logo:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255,255,255,0.65);
+        }
         
         .matrix-cell { 
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -82,9 +94,12 @@
         .calc-table td:last-child { border-right: none; }
         .calc-table tr:last-child td { border-bottom: none; }
         
+        .row-main { background-color: #dbeafe; color: #1e3a8a; }
         .row-green { background-color: #dcfce7; color: #166534; }
         .row-red { background-color: #fee2e2; color: #991b1b; }
         .row-orange { background-color: #ffedd5; color: #9a3412; }
+        .matrix-y-label { display: inline-block; text-align: center; }
+        .matrix-y-range { display: inline-block; font-size: 0.82em; font-weight: 700; letter-spacing: 0; text-transform: none; margin-top: 0.1rem; }
 
         /* Matrix layout sync: samakan proporsi sumbu Kinerja & Potensial */
         .matrix-shell {
@@ -468,6 +483,11 @@
                 font-size: 7.1px !important;
                 line-height: 1.06 !important;
             }
+            .matrix-y-range {
+                font-size: 5.7px !important;
+                line-height: 1.02 !important;
+                margin-top: 0.15mm !important;
+            }
             .matrix-x-levels span:last-child {
                 font-size: 5.8px !important;
                 line-height: 1.05 !important;
@@ -804,10 +824,10 @@
                 </div>
 
                 <div class="p-5 space-y-4 text-xs">
-                    <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100">
-                        <label class="font-bold text-slate-900 flex items-center justify-between gap-1.5 mb-1.5">
+                    <div class="space-y-1.5">
+                        <label class="font-bold text-slate-800 flex items-center justify-between gap-1.5 border-b pb-1">
                             <span>1. Kinerja Utama 60%</span>
-                            <button title="Penjelasan Indikator" onclick="showInfo('kinerjaUtama')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation fa-lg"></i></button>
+                            <button title="Penjelasan Indikator" onclick="showInfo('kinerjaUtama')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
                         </label>
                         <label class="font-medium text-slate-700 block mb-1">Penilaian Kinerja 60%</label>
                         <select id="kinerjaUtama" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
@@ -1085,7 +1105,7 @@
                 <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none print:h-full print:p-2 flex flex-col print:rounded-lg">
                     <div class="mb-2 sm:mb-4 border-b border-slate-100 pb-1 print:mb-2">
                         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2 print:text-[10px]">
-                            <i class="fa-solid fa-border-all text-blue-600"></i> Matriks 9 Kotak
+                            <i class="fa-solid fa-border-all text-blue-600"></i> Matriks 9 Kotak (Presisi)
                         </h3>
                     </div>
                     
@@ -1100,13 +1120,13 @@
                                     </div>
                                     <div class="matrix-y-levels flex-1 flex flex-col justify-around text-center py-2">
                                         <div class="relative flex-1 flex justify-center items-center">
-                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI ATAS<br>EKSPEKTASI</span>
+                                            <span class="matrix-y-label absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI ATAS<br>EKSPEKTASI<br><span class="matrix-y-range">≥80 – 100</span></span>
                                         </div>
                                         <div class="relative flex-1 flex justify-center items-center">
-                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">SESUAI<br>EKSPEKTASI</span>
+                                            <span class="matrix-y-label absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">SESUAI<br>EKSPEKTASI<br><span class="matrix-y-range">≥60 – &lt;80</span></span>
                                         </div>
                                         <div class="relative flex-1 flex justify-center items-center">
-                                            <span class="absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI BAWAH<br>EKSPEKTASI</span>
+                                            <span class="matrix-y-label absolute -rotate-90 whitespace-nowrap text-[7px] sm:text-[9px] font-bold text-slate-700 uppercase leading-tight text-center">DI BAWAH<br>EKSPEKTASI<br><span class="matrix-y-range">&lt;60</span></span>
                                         </div>
                                     </div>
                                 </div>
@@ -1476,9 +1496,10 @@
             const name = document.getElementById('asnName').value || '-';
             const unit = document.getElementById('asnUnit').value || '-';
             const target = document.getElementById('asnTarget').value || '-';
+            const targetLabel = target === '-' ? '-' : target.replace(/^Jenjang\s+/, '');
             document.getElementById('outPegawaiName').innerText = name.toUpperCase();
             document.getElementById('outPegawaiInstansi').innerText = unit.toUpperCase();
-            document.getElementById('outPegawaiTarget').innerText = `Jenjang Jabatan: ${target}`;
+            document.getElementById('outPegawaiTarget').innerText = `Jenjang Jabatan: ${targetLabel}`;
 
             // --- SUMBU Y ---
             const rawKinerjaUtama = parseFloat(document.getElementById('kinerjaUtama').value) || 0;
@@ -1627,9 +1648,9 @@
 
             const tbodyY = document.getElementById('tableBodyY');
             tbodyY.innerHTML = `
-                <tr class="${getRowClass(wKinerjaUtama, 60)}">
-                    <td class="font-semibold">Kinerja Utama</td>
-                    <td class="text-center">60%</td>
+                <tr class="row-main">
+                    <td class="font-semibold bg-white text-slate-700">Kinerja Utama</td>
+                    <td class="text-center bg-white text-slate-700 border-r border-r-slate-200">60%</td>
                     <td>Penilaian Kinerja</td>
                     <td class="text-center">60%</td>
                     <td class="text-center">${formatVal(rawKinerjaUtama)}</td>

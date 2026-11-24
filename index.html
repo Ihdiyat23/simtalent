@@ -60,7 +60,7 @@
             opacity: 1 !important;
             filter: grayscale(0%) !important;
         }
-        .info-btn { transition: color 0.2s, transform 0.2s; }
+        .info-btn { transition: color 0.2s, transform 0.2s; flex-shrink: 0; }
         .info-btn:hover { transform: scale(1.15); }
         
         /* Custom styles for tables */
@@ -771,7 +771,7 @@
                         <i class="fa-solid fa-user-gear text-blue-600"></i> Profil Pegawai & Pengaturan
                     </h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="grid grid-cols-1 gap-3 text-xs">
                     <div>
                         <label class="block font-medium text-slate-700 mb-1">Nama Pegawai</label>
                         <input type="text" id="asnName" value="IHDIYAT REA BUSTANI, S.STP., M.A.P." oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
@@ -803,7 +803,7 @@
                             </optgroup>
                         </select>
                     </div>
-                    <div class="sm:col-span-2">
+                    <div>
                         <label class="block font-medium text-slate-700 mb-1">Instansi / Unit Kerja</label>
                         <input type="text" id="asnUnit" value="BADAN KEPEGAWAIAN DAERAH" oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
@@ -825,11 +825,14 @@
 
                 <div class="p-5 space-y-4 text-xs">
                     <div class="space-y-1.5">
-                        <label class="font-bold text-slate-800 flex items-center justify-between gap-1.5 border-b pb-1">
+                        <label class="font-bold text-slate-800 flex items-center justify-between gap-1.5flex items-center justify-start gap-3 border-b pb-1">
                             <span>1. Kinerja Utama 60%</span>
-                            <button title="Penjelasan Indikator" onclick="showInfo('kinerjaUtama')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
                         </label>
-                        <label class="font-medium text-slate-700 block mb-1">Penilaian Kinerja 60%</label>
+                        <label class="font-medium text-slate-700 flex items-center gap-3 mb-1">
+                            <span>Penilaian Kinerja 60%</span>
+                            <button title="Penjelasan Indikator" onclick="showInfo('kinerjaUtama')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn shrink-0" aria-label="Penjelasan Penilaian Kinerja"><i class="fa-solid fa-circle-exclamation"></i></button>
+                            <button type="button" title="Putar Video Panduan Riwayat Kinerja MYASN" onclick="showKinerjaReference()" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Kinerja MYASN"><i class="fa-solid fa-video"></i></button>
+                        </label>
                         <select id="kinerjaUtama" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
                             <option value="100">Sangat Baik (Nilai: 100)</option>
                             <option value="80" selected>Baik (Nilai: 80)</option>
@@ -842,9 +845,10 @@
                     <div class="space-y-3">
                         <span class="font-bold text-slate-800 block text-xs border-b pb-1">2. Kinerja Penguat 40%</span>
                         <div>
-                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                            <label class="font-medium text-slate-700 flex items-center justify-start gap-3 mb-1">
                                 <span>2a. Penghargaan 15%</span>
                                 <button title="Penjelasan Indikator" onclick="showInfo('penghargaan')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                <button type="button" title="Putar Video Panduan Riwayat Penghargaan" onclick="showPenghargaanReference()" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Penghargaan"><i class="fa-solid fa-video"></i></button>
                             </label>
                             <select id="penghargaan" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
                                 <option value="100">Lingkup Internasional (100)</option>
@@ -855,9 +859,9 @@
                             </select>
                         </div>
                         <div>
-                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                            <label class="font-medium text-slate-700 flex items-center justify-start gap-3 mb-1">
                                 <span>2b. Penugasan dalam Tim Kerja 15%</span>
-                                <button title="Penjelasan Indikator" onclick="showInfo('timKerja')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                <button title="Penjelasan Indikator" onclick="showInfo('timKerja')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button> <button type="button" title="Putar Video Panduan Riwayat Penugasan dalam Tim Kerja" onclick="showIndicatorVideo('Riwayat Penugasan dalam Tim Kerja', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Penugasan%20Dalam%20Tim%20Kerja.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Penugasan dalam Tim Kerja"><i class="fa-solid fa-video"></i></button>
                             </label>
                             <select id="timKerja" onchange="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
                                 <option value="100">Ketua Lintas Instansi (100)</option>
@@ -868,7 +872,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="font-medium text-slate-700 flex items-center justify-between gap-1.5 mb-1">
+                            <label class="font-medium text-slate-700 flex items-center justify-start gap-3 mb-1">
                                 <span>2c. Umpan Balik Kinerja 360 Derajat 10%</span>
                                 <button title="Penjelasan Indikator" onclick="showInfo('umpanBalik')" class="text-amber-500 hover:text-amber-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
                             </label>
@@ -902,105 +906,115 @@
                         <span class="font-bold text-slate-900 block mb-2">1. Kompetensi 40%</span>
                         <div class="space-y-3 pl-2 border-l-2 border-slate-100">
                             <div>
-                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                     <span>1a. Penilaian Kompetensi 20%</span>
-                                    <button title="Penjelasan Indikator" onclick="showInfo('kompetensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                    <button title="Penjelasan Indikator" onclick="showInfo('kompetensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button> <button type="button" title="Putar Video Panduan Riwayat Penilaian Kompetensi" onclick="showIndicatorVideo('Riwayat Penilaian Kompetensi', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Penilaian%20Kompetensi.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Penilaian Kompetensi"><i class="fa-solid fa-video"></i></button>
                                 </label>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" id="kompetensiScore" step="0.01" min="0" max="100" value="85" oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white font-semibold text-emerald-700">
+                                    <input type="number" id="kompetensiScore" step="0.01" min="0" max="100" value="90" oninput="calculateTalentScore()" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white font-semibold text-emerald-700">
                                     <span class="text-xs font-bold text-slate-500">/ 100</span>
                                 </div>
                             </div>
                             <div>
-                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                     <span>1b. Pengembangan Kompetensi 10%</span>
-                                    <button title="Penjelasan Indikator" onclick="showInfo('bangkom')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
                                 </label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <select id="sertifikatPelatihan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
-                                        <option value="100">≥ 8 Sertifikat (100)</option>
-                                        <option value="75" selected>6 - 8 Sertifikat (75)</option>
-                                        <option value="50">4 - 6 Sertifikat (50)</option>
-                                        <option value="25">1 - 3 Sertifikat (25)</option>
-                                        <option value="0">0 Sertifikat (0)</option>
-                                    </select>
-                                    <select id="sertifikasiKeahlian" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
-                                        <option value="100">≥ 3 Sertifikasi (100)</option>
-                                        <option value="50" selected>1 - 2 Sertifikasi (50)</option>
-                                        <option value="0">0 Sertifikasi (0)</option>
-                                    </select>
+                                <div class="space-y-3 ml-5 pl-3 border-l-2 border-slate-100">
+                                    <div>
+                                        <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
+                                            <span>1b.1. Sertifikat Pelatihan</span>
+                                            <button title="Penjelasan Sertifikat Pelatihan" onclick="showInfo('sertifikatPelatihanInfo')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button type="button" title="Putar Video Panduan Riwayat Sertifikat" onclick="showIndicatorVideo('Riwayat Sertifikat', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Sertifikat.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Sertifikat"><i class="fa-solid fa-video"></i></button>
+                                        </label>
+                                        <select id="sertifikatPelatihan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                            <option value="100">≥ 8 Sertifikat (100)</option>
+                                            <option value="75" selected>6 - 8 Sertifikat (75)</option>
+                                            <option value="50">4 - 6 Sertifikat (50)</option>
+                                            <option value="25">1 - 3 Sertifikat (25)</option>
+                                            <option value="0">0 Sertifikat (0)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
+                                            <span>1b.2. Sertifikasi Keahlian</span>
+                                            <button title="Penjelasan Sertifikasi Keahlian" onclick="showInfo('sertifikasiKeahlianInfo')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button type="button" title="Putar Video Panduan Riwayat Sertifikasi" onclick="showIndicatorVideo('Riwayat Sertifikasi', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Sertifikasi.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Sertifikasi"><i class="fa-solid fa-video"></i></button>
+                                        </label>
+                                        <select id="sertifikasiKeahlian" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                            <option value="100">≥ 3 Sertifikasi (100)</option>
+                                            <option value="50" selected>1 - 2 Sertifikasi (50)</option>
+                                            <option value="0">0 Sertifikasi (0)</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                     <span>1c. Pengalaman Jabatan 10%</span>
-                                    <button title="Penjelasan Indikator" onclick="showInfo('pengalaman')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
                                 </label>
-                                <div class="space-y-1.5">
-                                    <select id="lamaJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
-                                        <option value="100" selected>Masa Kerja ≥ 5 Thn (100)</option>
-                                        <option value="80">Masa Kerja 3 - 4 Thn (80)</option>
-                                        <option value="60">Masa Kerja &lt; 3 Thn (60)</option>
-                                    </select>
-                                    <select id="keragamanJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
-                                        <option value="100" selected>Lintas Instansi (100)</option>
-                                        <option value="80">Lintas Unit Kerja (80)</option>
-                                        <option value="60">Hanya 1 Unit Kerja (60)</option>
-                                    </select>
-                                    <select id="jabatanNonDefinitif" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
-                                        <option value="100">Pj. Kepala Daerah (100)</option>
-                                        <option value="80">Plt. Jabatan Lebih Tinggi (80)</option>
-                                        <option value="60" selected>Plt. Jabatan Setara (60)</option>
-                                        <option value="40">Plh. Jabatan Lebih Tinggi (40)</option>
-                                        <option value="20">Plh. Jabatan Setara (20)</option>
-                                        <option value="0">Tidak Punya Nondefinitif (0)</option>
-                                    </select>
+                                <div class="space-y-3 ml-5 pl-3 border-l-2 border-slate-100">
+                                    <div>
+                                        <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
+                                            <span>1c.1. Lama Menduduki Jabatan</span>
+                                            <button title="Penjelasan Lama Jabatan" onclick="showInfo('lamaJabatanInfo')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button type="button" title="Putar Video Panduan Riwayat Jabatan" onclick="showIndicatorVideo('Riwayat Jabatan', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Jabatan.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Jabatan"><i class="fa-solid fa-video"></i></button>
+                                        </label>
+                                        <select id="lamaJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                            <option value="100">Masa Kerja ≥ 5 Thn (100)</option>
+                                            <option value="80">Masa Kerja 3 - 4 Thn (80)</option>
+                                            <option value="60" selected>Masa Kerja &lt; 3 Thn (60)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
+                                            <span>1c.2. Keragaman Riwayat Jabatan</span>
+                                            <button title="Penjelasan Keragaman Riwayat Jabatan" onclick="showInfo('keragamanJabatanInfo')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button type="button" title="Putar Video Panduan Riwayat Pindah Instansi" onclick="showIndicatorVideo('Riwayat Pindah Instansi', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Pindah%20Instansi.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Pindah Instansi"><i class="fa-solid fa-video"></i></button>
+                                        </label>
+                                        <select id="keragamanJabatan" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                            <option value="100" selected>Lintas Instansi (100)</option>
+                                            <option value="80">Lintas Unit Kerja (80)</option>
+                                            <option value="60">Hanya 1 Unit Kerja (60)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
+                                            <span>1c.3. Penugasan Nondefinitif</span>
+                                            <button title="Penjelasan Penugasan Nondefinitif" onclick="showInfo('nondefinitifInfo')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button type="button" title="Putar Video Panduan Riwayat Jabatan" onclick="showIndicatorVideo('Riwayat Jabatan', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Jabatan.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Jabatan"><i class="fa-solid fa-video"></i></button>
+                                        </label>
+                                        <select id="jabatanNonDefinitif" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
+                                            <option value="100">Pj. Kepala Daerah (100)</option>
+                                            <option value="80">Plt. Jabatan Lebih Tinggi (80)</option>
+                                            <option value="60">Plt. Jabatan Setara (60)</option>
+                                            <option value="40">Plh. Jabatan Lebih Tinggi (40)</option>
+                                            <option value="20">Plh. Jabatan Setara (20)</option>
+                                            <option value="0" selected>Tidak Memiliki (0)</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Potensi (25%) - Lurus 1 Kolom (8 Indikator) -->
+                    <!-- 2. Potensi (25%) - Input total manual -->
                     <div class="border-b pb-3">
                         <div class="flex justify-between items-center mb-2">
                             <label class="font-bold text-slate-900 flex items-center gap-1.5">
                                 <span>2. Potensi 25% (Penilaian Potensi 25%)</span>
-                                <button title="Penjelasan Indikator" onclick="showInfo('potensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn ml-1"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                <button title="Penjelasan Indikator" onclick="showInfo('potensi')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn shrink-0"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                <button type="button" title="Putar Video Panduan Riwayat Potensi" onclick="showIndicatorVideo('Riwayat Potensi', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Potensi.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Potensi"><i class="fa-solid fa-video"></i></button>
                             </label>
                             <span id="potensiTotalLabel" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">31/40</span>
                         </div>
-                        <div class="grid grid-cols-1 gap-2 text-xs">
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KEMAMPUAN INTELEKTUAL">KEMAMPUAN INTELEKTUAL</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="3" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                        <div class="flex items-center justify-between gap-3 border border-slate-200 rounded-lg p-3 bg-white">
+                            <div class="min-w-0">
+                                <label for="potensiTotalInput" class="block text-xs font-semibold text-slate-700">Total Nilai Potensi</label>
+                                <p class="text-[10px] text-slate-400 mt-1">Masukkan nilai akhir penilaian potensi (maksimal 40)</p>
                             </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KECERDASAN EMOSIONAL">KECERDASAN EMOSIONAL</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KESADARAN DIRI">KESADARAN DIRI</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="KEMAMPUAN INTERPERSONAL">KEMAMPUAN INTERPERSONAL</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="MOTIVASI DAN KOMITMEN">MOTIVASI DAN KOMITMEN</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="BELAJAR CEPAT & KEMBANGKAN DIRI">BELAJAR CEPAT & KEMBANGKAN DIRI</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="MENYELESAIKAN PERMASALAHAN">MENYELESAIKAN PERMASALAHAN</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
-                            </div>
-                            <div class="flex items-center justify-between border border-slate-200 p-1.5 rounded">
-                                <span class="text-[10px] text-slate-600 truncate mr-2" title="BERPIKIR KRITIS & STRATEGIS">BERPIKIR KRITIS & STRATEGIS</span>
-                                <div class="flex items-center gap-1"><input type="number" min="0" max="5" value="4" class="potensi-input w-10 p-1 border rounded text-center text-sm font-semibold text-emerald-700 bg-slate-50" oninput="calculateTalentScore()"><span class="text-[10px] text-slate-400">/5</span></div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <input type="number" id="potensiTotalInput" min="0" max="40" step="0.01" value="31" oninput="calculateTalentScore()" class="w-24 px-3 py-2 border border-slate-300 rounded-lg text-center text-lg font-bold text-emerald-700 bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                                <span class="text-xs font-semibold text-slate-400">/ 40</span>
                             </div>
                         </div>
                     </div>
@@ -1008,11 +1022,11 @@
                     <div class="space-y-3">
                         <div>
                             <label class="font-bold text-slate-900 mb-2 block">3. Kualifikasi 20%</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 gap-3">
                                 <div>
-                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                         <span>3a. Tingkat Pendidikan Formal 10%</span>
-                                        <button title="Penjelasan Indikator" onclick="showInfo('pendidikan')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                        <button title="Penjelasan Indikator" onclick="showInfo('pendidikan')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button> <button type="button" title="Putar Video Panduan Riwayat Pendidikan" onclick="showIndicatorVideo('Riwayat Pendidikan', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Pendidikan.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Pendidikan"><i class="fa-solid fa-video"></i></button>
                                     </label>
                                     <select id="pendidikanFormal" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
                                         <option value="100">Doktor/S3 (100)</option>
@@ -1023,9 +1037,9 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                                    <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                         <span>3b. Kesesuaian Bidang Ilmu 10%</span>
-                                        <button title="Penjelasan Indikator" onclick="showInfo('kesesuaian')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                        <button title="Penjelasan Indikator" onclick="showInfo('kesesuaian')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button> <button type="button" title="Putar Video Panduan Riwayat Kesesuaian Ilmu" onclick="showIndicatorVideo('Riwayat Kesesuaian Ilmu', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Kesesuaian%20Ilmu.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Kesesuaian Ilmu"><i class="fa-solid fa-video"></i></button>
                                     </label>
                                     <select id="kesesuaianBidang" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
                                         <option value="100" selected>Ilmu Sesuai (100)</option>
@@ -1036,9 +1050,9 @@
                         </div>
                         <div>
                             <label class="font-bold text-slate-900 mb-2 block">4. Integritas & Moralitas 15%</label>
-                            <label class="font-medium text-slate-700 mb-1 flex items-center justify-between gap-1.5">
+                            <label class="font-medium text-slate-700 mb-1 flex items-center justify-start gap-3">
                                 <span>Verifikasi Rekam Jejak Disiplin 15%</span>
-                                <button title="Penjelasan Indikator" onclick="showInfo('disiplin')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button>
+                                <button title="Penjelasan Indikator" onclick="showInfo('disiplin')" class="text-emerald-500 hover:text-emerald-700 transition-colors info-btn"><i class="fa-solid fa-circle-exclamation"></i></button> <button type="button" title="Putar Video Panduan Riwayat Hukuman Disiplin" onclick="showIndicatorVideo('Riwayat Hukuman Disiplin', 'https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Hukuman%20Disiplin.mp4')" class="text-sky-600 hover:text-sky-800 transition-colors info-btn shrink-0" aria-label="Putar video panduan Riwayat Hukuman Disiplin"><i class="fa-solid fa-video"></i></button>
                             </label>
                             <select id="rekamDisiplin" onchange="calculateTalentScore()" class="w-full p-2 rounded border border-slate-300 bg-white">
                                 <option value="100" selected>Tidak Pernah Hukuman (100)</option>
@@ -1205,30 +1219,6 @@
 
             </div>
 
-            <!-- Tabel Kalkulasi Nilai Talenta -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none overflow-hidden mb-1 print:rounded-lg">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-slate-50/80 border-b border-slate-200">
-                            <th class="py-2 px-3 text-left text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wide print:py-1 print:px-2">PEMETAAN KOTAK MANAJEMEN TALENTA</th>
-                            <th class="py-2 px-3 text-center text-[11px] sm:text-xs font-bold text-slate-800 uppercase tracking-wide border-l border-slate-200 w-1/4 sm:w-1/3 print:py-1 print:px-2" id="talentaBoxHeader">KOTAK ?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="py-2 px-3 text-[13px] sm:text-sm text-slate-500 align-top print:py-1 print:px-2 print:text-[7px]">
-                                <p class="mb-1"><strong class="text-slate-800">Nilai Talenta =</strong> (50% &times; Nilai Sumbu Potensial) + (50% &times; Nilai Sumbu Kinerja)</p>
-                                <p id="talentaCalc1" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= (50% &times; 0.00) + (50% &times; 0.00)</p>
-                                <p id="talentaCalc2" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= 0.00 + 0.00</p>
-                            </td>
-                            <td class="py-2 px-3 text-center align-middle border-l border-slate-200 print:py-1 print:px-2">
-                                <span id="talentaFinalScore" class="inline-block bg-[#2ea2db] text-white font-extrabold text-base sm:text-xl px-3 py-1 sm:px-6 sm:py-2.5 rounded-md shadow-sm tracking-wide">0.00</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
             <!-- Kalkulasi Rinci Table Sumbu Y & X -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none flex-1 flex flex-col print:rounded-lg">
                 
@@ -1311,6 +1301,33 @@
             </div>
         </section>
 
+        <!-- Tabel Kalkulasi Nilai Talenta: ditempatkan paling bawah -->
+            <!-- Tabel Kalkulasi Nilai Talenta -->
+            <div class="col-span-full w-full min-w-0 bg-white rounded-xl shadow-sm border border-slate-200 print:border-slate-300 print:shadow-none overflow-hidden mb-1 print:rounded-lg">
+                <table class="w-full table-fixed">
+                    <colgroup><col style="width:75%"><col style="width:25%"></colgroup>
+                    <thead>
+                        <tr class="bg-slate-50/80 border-b border-slate-200">
+                            <th class="py-2 px-3 text-left text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wide print:py-1 print:px-2">PEMETAAN KOTAK MANAJEMEN TALENTA</th>
+                            <th class="py-2 px-3 text-center text-[11px] sm:text-xs font-bold text-slate-800 uppercase tracking-wide border-l border-slate-200 w-1/4 sm:w-1/3 print:py-1 print:px-2" id="talentaBoxHeader">KOTAK ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-2 px-3 text-[13px] sm:text-sm text-slate-500 align-top print:py-1 print:px-2 print:text-[7px]">
+                                <p class="mb-1"><strong class="text-slate-800">Nilai Talenta =</strong> (50% &times; Nilai Sumbu Potensial) + (50% &times; Nilai Sumbu Kinerja)</p>
+                                <p id="talentaCalc1" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= (50% &times; 0.00) + (50% &times; 0.00)</p>
+                                <p id="talentaCalc2" class="text-[11px] sm:text-xs text-slate-400 print:text-[6px] mb-0">= 0.00 + 0.00</p>
+                            </td>
+                            <td class="py-2 px-3 text-center align-middle border-l border-slate-200 print:py-1 print:px-2">
+                                <span id="talentaFinalScore" class="inline-block bg-[#2ea2db] text-white font-extrabold text-base sm:text-xl px-3 py-1 sm:px-6 sm:py-2.5 rounded-md shadow-sm tracking-wide">0.00</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
     </main>
 
     <footer class="mt-auto py-4 border-t-4 border-amber-500 bg-slate-900 text-center text-white shadow-lg print:border-amber-600">
@@ -1323,6 +1340,60 @@
             <p>Simulasi Manajemen Talenta ASN Berdasarkan Kepka BKN No. 411/2025</p>
         </div>
     </footer>
+
+    <!-- Modal Video Panduan Riwayat Kinerja MYASN: diputar langsung di Single HTML -->
+    <div id="kinerjaReferenceModal" onclick="closeKinerjaReference()" class="fixed inset-0 z-[60] hidden bg-slate-900/80 backdrop-blur-sm items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-200 no-print" role="dialog" aria-modal="true" aria-labelledby="kinerjaReferenceTitle">
+        <div id="kinerjaReferenceContent" onclick="event.stopPropagation()" class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[94vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-200">
+            <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between gap-3">
+                <h3 id="kinerjaReferenceTitle" class="font-bold text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-video text-sky-300"></i> Video Panduan Riwayat Kinerja MYASN</h3>
+                <button type="button" onclick="closeKinerjaReference()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center" aria-label="Tutup video panduan" title="Tutup"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-3 sm:p-5 overflow-auto bg-slate-100">
+                <video id="kinerjaReferenceVideo" class="block w-full max-h-[76vh] rounded-xl bg-black shadow-lg" controls playsinline preload="auto">
+                    <source src="https://raw.githubusercontent.com/Ihdiyat23/simtalent/main/Riwayat%20Kinerja.mp4" type="video/mp4">
+                </video>
+                <p id="kinerjaVideoError" class="hidden mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                    Video belum dapat dimuat. Periksa koneksi internet atau pastikan file MP4 tersedia pada hosting SIM Talent.
+                </p>
+                <p class="mt-3 text-xs text-slate-600"><i class="fa-solid fa-circle-play text-sky-600 mr-1"></i> Video diputar langsung di halaman SIM Talent.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Video Panduan Riwayat Penghargaan: diputar langsung di Single HTML -->
+    <div id="penghargaanReferenceModal" onclick="closePenghargaanReference()" class="fixed inset-0 z-[60] hidden bg-slate-900/80 backdrop-blur-sm items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-200 no-print" role="dialog" aria-modal="true" aria-labelledby="penghargaanReferenceTitle">
+        <div id="penghargaanReferenceContent" onclick="event.stopPropagation()" class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[94vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-200">
+            <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between gap-3">
+                <h3 id="penghargaanReferenceTitle" class="font-bold text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-video text-sky-300"></i> Video Panduan Riwayat Penghargaan</h3>
+                <button type="button" onclick="closePenghargaanReference()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center" aria-label="Tutup video panduan" title="Tutup"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-3 sm:p-5 overflow-auto bg-slate-100">
+                <video id="penghargaanReferenceVideo" class="block w-full max-h-[76vh] rounded-xl bg-black shadow-lg" controls playsinline preload="metadata">
+                    <source src="https://raw.githubusercontent.com/Ihdiyat23/simtalent/refs/heads/main/Riwayat%20Penghargaan.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung pemutaran video.
+                </video>
+                <p id="penghargaanVideoError" class="hidden mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">Video belum dapat dimuat. Periksa koneksi internet atau pastikan file MP4 tersedia pada repository GitHub.</p>
+                <p class="mt-3 text-xs text-slate-600"><i class="fa-solid fa-circle-play text-sky-600 mr-1"></i> Video diputar langsung di halaman SIM Talent.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Video Panduan Indikator -->
+    <div id="indicatorVideoModal" onclick="closeIndicatorVideo()" class="fixed inset-0 z-[70] hidden bg-slate-900/80 backdrop-blur-sm items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-200 no-print" role="dialog" aria-modal="true">
+        <div id="indicatorVideoContent" onclick="event.stopPropagation()" class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[94vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-200">
+            <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between gap-3">
+                <h3 id="indicatorVideoTitle" class="font-bold text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-video text-sky-300"></i> Video Panduan</h3>
+                <button type="button" onclick="closeIndicatorVideo()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center" aria-label="Tutup video"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-3 sm:p-5 overflow-auto bg-slate-100">
+                <video id="indicatorVideoPlayer" class="block w-full max-h-[76vh] rounded-xl bg-black shadow-lg" controls playsinline preload="metadata">Browser Anda tidak mendukung pemutaran video.</video>
+                <p id="indicatorVideoError" class="hidden mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">Video belum dapat dimuat. Pastikan file MP4 tersedia di repository GitHub dan koneksi internet aktif.</p>
+                <p class="mt-3 text-xs text-slate-600"><i class="fa-solid fa-circle-play text-sky-600 mr-1"></i> Video diputar langsung di halaman SIM Talent.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Informasi Indikator -->
     <div id="infoModal" onclick="closeInfo()" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 no-print">
@@ -1352,7 +1423,7 @@
                     <h4 class="font-bold text-amber-700 flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
                         <i class="fa-solid fa-ruler-combined"></i> Cara Pengukuran
                     </h4>
-                    <p id="modalPengukuran" class="leading-relaxed"></p>
+                    <div id="modalPengukuran" class="leading-relaxed"></div>
                 </div>
             </div>
             <div class="p-4 border-t border-slate-200 bg-white rounded-b-2xl text-right">
@@ -1533,14 +1604,12 @@
             const rawPengalaman = (vLamaJab + vRagamJab + vNonDef) / 3;
             const wPengalaman = rawPengalaman * 0.10;
 
-            const potensiInputs = document.querySelectorAll('.potensi-input');
-            let sumPotensiRaw = 0;
-            potensiInputs.forEach(input => {
-                let val = parseFloat(input.value) || 0;
-                if(val > 5) val = 5;
-                sumPotensiRaw += val;
-            });
-            document.getElementById('potensiTotalLabel').innerText = `${sumPotensiRaw}/40`;
+            // Nilai potensi diinput langsung sebagai total dari 8 indikator (maksimal 40).
+            const potensiInput = document.getElementById('potensiTotalInput');
+            let sumPotensiRaw = parseFloat(potensiInput.value);
+            if (!Number.isFinite(sumPotensiRaw)) sumPotensiRaw = 0;
+            sumPotensiRaw = Math.min(40, Math.max(0, sumPotensiRaw));
+            document.getElementById('potensiTotalLabel').innerText = `${Number(sumPotensiRaw.toFixed(2))}/40`;
             const rawPotensiScale100 = (sumPotensiRaw / 40) * 100;
             const wPotensi = rawPotensiScale100 * 0.25;
 
@@ -1648,7 +1717,7 @@
 
             const tbodyY = document.getElementById('tableBodyY');
             tbodyY.innerHTML = `
-                <tr class="row-main">
+                <tr class="${getRowClass(wKinerjaUtama, 60)}">
                     <td class="font-semibold bg-white text-slate-700">Kinerja Utama</td>
                     <td class="text-center bg-white text-slate-700 border-r border-r-slate-200">60%</td>
                     <td>Penilaian Kinerja</td>
@@ -1751,31 +1820,178 @@
 
         function resetForm() {
             setSelectValue('kinerjaUtama', '80'); setSelectValue('penghargaan', '25'); setSelectValue('timKerja', '75'); setSelectValue('umpanBalik', '80');
-            document.getElementById('kompetensiScore').value = 85;
+            document.getElementById('kompetensiScore').value = 90;
             setSelectValue('sertifikatPelatihan', '75'); setSelectValue('sertifikasiKeahlian', '50');
-            setSelectValue('lamaJabatan', '100'); setSelectValue('keragamanJabatan', '100'); setSelectValue('jabatanNonDefinitif', '60');
-            const defaultPotensi = [3, 4, 4, 4, 4, 4, 4, 4];
-            document.querySelectorAll('.potensi-input').forEach((input, index) => {
-                if(index < defaultPotensi.length) input.value = defaultPotensi[index];
-            });
+            setSelectValue('lamaJabatan', '60'); setSelectValue('keragamanJabatan', '100'); setSelectValue('jabatanNonDefinitif', '0');
+            document.getElementById('potensiTotalInput').value = 31;
             setSelectValue('pendidikanFormal', '90'); setSelectValue('kesesuaianBidang', '100'); setSelectValue('rekamDisiplin', '100');
             document.getElementById('asnName').value = 'IHDIYAT REA BUSTANI, S.STP., M.A.P.';
             calculateTalentScore();
         }
 
         const infoData = {
-            kinerjaUtama: { title: "1. Kinerja Utama", batasan: "Penilaian Kinerja merupakan hasil evaluasi kinerja tahunan pegawai ASN yang terdiri atas hasil kerja dan perilaku kerja.", sumber: "Predikat kinerja hasil evaluasi kinerja pegawai ASN dalam layanan e-Kinerja pada ASN Digital.", pengukuran: "Berdasarkan predikat kinerja yang dikonversikan ke dalam angka (Sangat Baik: 100, Baik: 80, Butuh Perbaikan: 60, Kurang: 40, Sangat Kurang: 20)." },
+            kinerjaUtama: { title: "1. Kinerja Utama", batasan: "Penilaian Kinerja merupakan hasil evaluasi kinerja tahunan pegawai ASN yang terdiri atas hasil kerja dan perilaku kerja.", sumber: "Predikat kinerja hasil evaluasi kinerja pegawai ASN dalam layanan e-Kinerja pada ASN Digital.", pengukuran: "Berdasarkan predikat kinerja tahun sebelumnya yang dikonversikan ke dalam angka (Sangat Baik: 100, Baik: 80, Butuh Perbaikan: 60, Kurang: 40, Sangat Kurang: 20)." },
             penghargaan: { title: "2a. Penghargaan", batasan: "Penghargaan adalah pengakuan resmi atau formal yang terima oleh ASN atas prestasinya dalam hal capaian kinerja.", sumber: "Piagam/sertifikat penghargaan/tanda apresiasi lainnya yang dapat membuktikan lingkup prestasi yang diraih serta pemberi penghargaan/riwayat penghargaan dalam SIASN.", pengukuran: "Berdasarkan lingkup penghargaan atas prestasi pegawai ASN selama 5 (lima) tahun terakhir (Internasional: 100, Nasional: 75, Lintas Instansi: 50, Internal: 25, Tidak Pernah: 0)." },
-            timKerja: { title: "2b. Penugasan dalam Tim Kerja", batasan: "Penugasan dalam Tim Kerja adalah kedudukan pegawai ASN secara resmi di dalam tim kerja untuk menyelenggarakan tugas-tugas kedinasan dalam rangka mendukung kinerja instansi.", sumber: "Surat keputusan/perintah penugasan, riwayat penugasan dalam tim kerja di layanan e-Kinerja ASN Digital.", pengukuran: "Berdasarkan kedudukan tertinggi yang pernah ditugaskan kepada seorang pegawai ASN dalam kurun waktu 2 tahun terakhir (Ketua Lintas: 100, Ketua Internal: 75, Anggota Lintas: 50, Anggota Internal: 25)." },
+            timKerja: { title: "2b. Penugasan dalam Tim Kerja", batasan: "Penugasan dalam Tim Kerja adalah kedudukan pegawai ASN secara resmi di dalam tim kerja untuk menyelenggarakan tugas-tugas kedinasan dalam rangka mendukung kinerja instansi.", sumber: "Surat keputusan penugasan/surat perintah penugasan/riwayat penugasan dalam tim kerja/riwayat penugasan tim kerja dalam layanan e-Kinerja ASN Digital.", pengukuran: "Berdasarkan kedudukan tertinggi yang pernah ditugaskan kepada seorang pegawai ASN dalam kurun waktu 2 tahun terakhir (Ketua Lintas: 100, Ketua Internal: 75, Anggota Lintas: 50, Anggota Internal: 25)." },
             umpanBalik: { title: "2c. Umpan Balik Kinerja 360 Derajat", batasan: "Umpan balik 360 derajat merupakan penilaian atas perilaku pegawai ASN oleh atasan, rekan sejawat dan/atau bawahan.", sumber: "Hasil penilaian umpan balik 360 derajat seorang pegawai ASN.", pengukuran: "Berdasarkan hasil penilaian umpan balik 360 derajat yang dikonversikan ke dalam angka (Sangat Baik: 100, Baik: 80, Butuh Perbaikan: 60, Kurang: 40, Sangat Kurang: 20)." },
-            kompetensi: { title: "1a. Penilaian Kompetensi", batasan: "Penilaian kompetensi adalah suatu proses membandingkan kompetensi yang dimiliki oleh pegawai ASN dengan standar kompetensi jabatan.", sumber: "Hasil penilaian kompetensi (Assessment) pegawai.", pengukuran: "Penilaian kompetensi dikonversi ke dalam angka nominal skala 0-100." },
-            bangkom: { title: "1b. Pengembangan Kompetensi", batasan: "Pengembangan Kompetensi adalah upaya pemenuhan kebutuhan kompetensi pegawai ASN agar sesuai dengan Standar Kompetensi Jabatan.", sumber: "Riwayat pelatihan dan pengembangan kompetensi dibuktikan dengan sertifikat kepesertaan/kompetensi.", pengukuran: "Menghitung nilai rata-rata riwayat pelatihan dan pengembangan kompetensi selama 3 tahun terakhir sesuai tabel bobot." },
-            pengalaman: { title: "1c. Pengalaman Jabatan", batasan: "Pengalaman Jabatan adalah unsur pengalaman pegawai ASN dalam menduduki jabatan.", sumber: "Riwayat Jabatan.", pengukuran: "Diukur dengan rata-rata nilai indikator lama jabatan, keragaman riwayat, dan penugasan nondefinitif." },
-            potensi: { title: "2. Potensi (Penilaian Potensi)", batasan: "Penilaian Potensi adalah proses membandingkan potensi yang dimiliki pegawai ASN dengan standar potensi berdasarkan 8 indikator spesifik (Kemampuan Intelektual, Kecerdasan Emosional, dll).", sumber: "Hasil penilaian potensi pegawai dari asesmen (Assessment Center) psikologi.", pengukuran: "Masing-masing dari 8 indikator dinilai skala 0-5. Total skor maksimal 40. Kemudian dikonversi menjadi persentase skala 0-100%." },
+            kompetensi: { title: "1a. Penilaian Kompetensi", batasan: "Penilaian kompetensi adalah suatu proses membandingkan kompetensi (manajerial, sosial kultural dan teknis) yang dimiliki oleh pegawai ASN dengan standar kompetensi jabatan yang dipersyaratkan.", sumber: "Penilaian kompetensi manajerial, sosio kultural dan teknis dikonversi.", pengukuran: "Penilaian kompetensi dikonversi ke dalam angka nominal skala 0-100." },
+            sertifikatPelatihanInfo: { title: "1b.1. Sertifikat Pelatihan", batasan: "Sertifikat pelatihan merupakan bukti keikutsertaan ASN dalam kegiatan pengembangan kompetensi/pelatihan.", sumber: "Riwayat sertifikat pelatihan pada MyASN/ASN Digital.", pengukuran: "Jumlah sertifikat pelatihan dikonversikan sesuai tabel nilai." },
+            sertifikasiKeahlianInfo: { title: "1b.2. Sertifikasi Keahlian", batasan: "Sertifikasi keahlian merupakan bukti pengakuan kompetensi atau keahlian tertentu yang dimiliki ASN.", sumber: "Riwayat sertifikasi pada MyASN/ASN Digital.", pengukuran: "Jumlah sertifikasi keahlian dikonversikan sesuai tabel nilai." },
+            lamaJabatanInfo: { title: "1c.1. Lama Menduduki Jabatan", batasan: "Lama jabatan merupakan periode waktu yang telah dijalani ASN dalam menduduki jabatan terakhir, termasuk pengalaman pada jabatan lain yang memiliki jenjang setara.", sumber: "Riwayat Jabatan pada MyASN/ASN Digital.", pengukuran: "Masa jabatan dikonversikan sesuai tabel nilai." },
+            keragamanJabatanInfo: { title: "1c.2. Keragaman Riwayat Jabatan", batasan: "Keragaman riwayat jabatan menggambarkan pengalaman ASN pada instansi atau unit kerja yang berbeda.", sumber: "Riwayat Jabatan dan Riwayat Pindah Instansi pada MyASN/ASN Digital.", pengukuran: "Lingkup perpindahan/penempatan dikonversikan sesuai tabel nilai." },
+            nondefinitifInfo: { title: "1c.3. Penugasan Nondefinitif", batasan: "Penugasan nondefinitif merupakan penugasan sebagai pejabat pelaksana tugas, pelaksana harian, atau penjabat sesuai ketentuan.", sumber: "Riwayat Penugasan Dalam Jabatan pada MyASN/ASN Digital.", pengukuran: "Jenis dan tingkat jabatan nondefinitif dikonversikan sesuai tabel nilai. Jika tidak memiliki penugasan Jabatan Nondefinitif, pilih Tidak Memiliki (0)." },
+            potensi: { title: "2. Potensi (Penilaian Potensi)", batasan: "Penilaian Potensi merupakan proses mengukur dan membandingkan potensi yang dimiliki Pegawai ASN terhadap standar potensi berdasarkan 8 indikator, meliputi kemampuan intelektual, berpikir kritis, kemampuan menyelesaikan masalah, motivasi dan komitmen, kemampuan belajar cepat dan pengembangan diri, kemampuan interpersonal, kesadaran diri, serta kecerdasan emosional.", sumber: "Hasil penilaian potensi pegawai ASN Digital.", pengukuran: "Masing-masing dari 8 indikator dinilai skala 0-5. Total skor maksimal 40. Kemudian dikonversi menjadi persentase skala 0-100%." },
             pendidikan: { title: "3a. Tingkat Pendidikan Formal", batasan: "Tingkat Pendidikan Formal adalah jenjang pendidikan formal terakhir yang telah selesai ditempuh oleh pegawai ASN.", sumber: "Ijazah terakhir/riwayat pendidikan formal.", pengukuran: "Melihat jenjang pendidikan formal terakhir (Doktor: 100, Magister: 90, Sarjana: 80, DIII: 70, SLTA: 60)." },
             kesesuaian: { title: "3b. Kesesuaian Bidang Ilmu", batasan: "Kesesuaian Bidang Ilmu adalah keterkaitan bidang ilmu yang dimiliki pegawai dengan rumpun jabatan target.", sumber: "Ijazah/riwayat pendidikan formal.", pengukuran: "Melihat kesesuaian bidang ilmu dalam riwayat pendidikan pegawai ASN dengan rumpun jabatan target (Sesuai: 100, Tidak Sesuai: 50)." },
             disiplin: { title: "4. Integritas dan Moralitas (Disiplin)", batasan: "Verifikasi Rekam Jejak Disiplin adalah proses memastikan kepatuhan pegawai terhadap peraturan disiplin.", sumber: "Riwayat hukuman disiplin/Surat Keputusan Penjatuhan Hukuman Disiplin.", pengukuran: "Mengecek riwayat hukuman disiplin dalam 5 tahun terakhir (Tidak Pernah: 100, Ringan: 75, Sedang: 50, Berat: 25, Sedang Dihukum: 0)." }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('kinerjaReferenceVideo');
+            const error = document.getElementById('kinerjaVideoError');
+            if (video && error) {
+                video.addEventListener('error', () => error.classList.remove('hidden'));
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('penghargaanReferenceVideo');
+            const error = document.getElementById('penghargaanVideoError');
+            if (video && error) {
+                video.addEventListener('error', () => error.classList.remove('hidden'));
+            }
+        });
+
+        function showPenghargaanReference() {
+            const modal = document.getElementById('penghargaanReferenceModal');
+            const content = document.getElementById('penghargaanReferenceContent');
+            const video = document.getElementById('penghargaanReferenceVideo');
+            const error = document.getElementById('penghargaanVideoError');
+            if (!modal || !content) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            document.addEventListener('keydown', handlePenghargaanReferenceEscape);
+            if (video) {
+                if (error) error.classList.add('hidden');
+                video.onerror = () => { if (error) error.classList.remove('hidden'); };
+                video.onloadeddata = () => { if (error) error.classList.add('hidden'); };
+                video.load();
+                const playRequest = video.play();
+                if (playRequest && typeof playRequest.catch === 'function') {
+                    playRequest.catch(() => { /* Kontrol video tetap tersedia jika autoplay ditolak browser. */ });
+                }
+            }
+        }
+
+        function closePenghargaanReference() {
+            const modal = document.getElementById('penghargaanReferenceModal');
+            const content = document.getElementById('penghargaanReferenceContent');
+            const video = document.getElementById('penghargaanReferenceVideo');
+            if (!modal || !content) return;
+            if (video) { video.pause(); video.currentTime = 0; }
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            window.setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+            document.removeEventListener('keydown', handlePenghargaanReferenceEscape);
+        }
+
+        function handlePenghargaanReferenceEscape(event) {
+            if (event.key === 'Escape') closePenghargaanReference();
+        }
+
+        function showKinerjaReference() {
+            const modal = document.getElementById('kinerjaReferenceModal');
+            const content = document.getElementById('kinerjaReferenceContent');
+            const video = document.getElementById('kinerjaReferenceVideo');
+            const error = document.getElementById('kinerjaVideoError');
+            if (!modal || !content) return;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            document.addEventListener('keydown', handleKinerjaReferenceEscape);
+
+            if (video) {
+                if (error) error.classList.add('hidden');
+                video.load();
+                const playRequest = video.play();
+                if (playRequest && typeof playRequest.catch === 'function') {
+                    playRequest.catch(() => {
+                        // Kontrol video tetap tersedia jika browser menolak autoplay.
+                    });
+                }
+            }
+        }
+
+        function closeKinerjaReference() {
+            const modal = document.getElementById('kinerjaReferenceModal');
+            const content = document.getElementById('kinerjaReferenceContent');
+            const video = document.getElementById('kinerjaReferenceVideo');
+            if (!modal || !content) return;
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            window.setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+            document.removeEventListener('keydown', handleKinerjaReferenceEscape);
+        }
+        function handleKinerjaReferenceEscape(event) {
+            if (event.key === 'Escape') closeKinerjaReference();
+        }
+
+
+        function showIndicatorVideo(title, url) {
+            const modal = document.getElementById('indicatorVideoModal');
+            const content = document.getElementById('indicatorVideoContent');
+            const video = document.getElementById('indicatorVideoPlayer');
+            const error = document.getElementById('indicatorVideoError');
+            if (!modal || !content || !video) return;
+            document.getElementById('indicatorVideoTitle').innerHTML = `<i class="fa-solid fa-video text-sky-300"></i> Video Panduan ${title}`;
+            error.classList.add('hidden');
+            video.pause();
+            video.innerHTML = '';
+            const source = document.createElement('source');
+            source.src = url;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            video.load();
+            video.onerror = () => error.classList.remove('hidden');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            document.addEventListener('keydown', handleIndicatorVideoEscape);
+            const playAttempt = video.play();
+            if (playAttempt && typeof playAttempt.catch === 'function') playAttempt.catch(() => {});
+        }
+        function closeIndicatorVideo() {
+            const modal = document.getElementById('indicatorVideoModal');
+            const content = document.getElementById('indicatorVideoContent');
+            const video = document.getElementById('indicatorVideoPlayer');
+            if (video) { video.pause(); video.removeAttribute('src'); video.innerHTML = ''; video.load(); }
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            window.setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+            document.removeEventListener('keydown', handleIndicatorVideoEscape);
+        }
+        function handleIndicatorVideoEscape(event) {
+            if (event.key === 'Escape') closeIndicatorVideo();
+        }
 
         function showInfo(key) {
             const data = infoData[key];
@@ -1784,8 +2000,43 @@
             document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info"></i> ${data.title}`;
             document.getElementById('modalBatasan').innerText = data.batasan;
             document.getElementById('modalSumber').innerText = data.sumber;
-            document.getElementById('modalPengukuran').innerText = data.pengukuran;
-            
+            const pengukuranEl = document.getElementById('modalPengukuran');
+            const conversionTables = {
+                kinerjaUtama: { intro: 'Predikat kinerja dikonversikan ke dalam nilai berikut:', rows: [['Sangat Baik','100'],['Baik','80'],['Butuh Perbaikan','60'],['Kurang','40'],['Sangat Kurang','20']] },
+                penghargaan: { intro: 'Nilai berdasarkan lingkup penghargaan dalam 5 (lima) tahun terakhir:', rows: [['Internasional','100'],['Nasional','75'],['Lintas Instansi','50'],['Internal Instansi','25'],['Tidak Pernah','0']] },
+                timKerja: { intro: 'Nilai berdasarkan kedudukan tertinggi dalam tim kerja selama 2 tahun terakhir:', rows: [['Ketua Tim Kerja Lintas Instansi','100'],['Ketua Tim Kerja Internal Instansi','75'],['Anggota Tim Kerja Lintas Instansi','50'],['Anggota Internal Tim Kerja Instansi','25'],['Tidak mempunyai penugasan Tim Kerja','0']] },
+                umpanBalik: { intro: 'Hasil penilaian umpan balik 360 derajat dikonversikan sebagai berikut:', rows: [['Sangat Baik','100'],['Baik','80'],['Butuh Perbaikan','60'],['Kurang','40'],['Sangat Kurang','20']] },
+                kompetensi: { intro: 'Nilai hasil penilaian kompetensi menggunakan skala nominal 0–100:', rows: [['Angka Nominal Skala','0–100']] },
+                sertifikatPelatihanInfo: { intro: 'Jumlah Sertifikat Kepesertaan Pelatihan dan Pengembangan Kompetensi selama tiga tahun terakhir:', rows: [['≥ 8 sertifikat','100'],['6–8 sertifikat','75'],['4–6 sertifikat','50'],['1–3 sertifikat','25'],['Tidak ada sertifikat','0']] },
+                sertifikasiKeahlianInfo: { intro: 'Jumlah Sertifikasi Keahlian/Diklat Penjenjangan:', rows: [['≥ 3 sertifikasi','100'],['1–2 sertifikasi','50'],['Tidak ada sertifikasi','0']] },
+                lamaJabatanInfo: { intro: 'Konversi masa kerja dalam jabatan:', rows: [['Masa jabatan ≥ 5 tahun','100'],['Masa jabatan 3–4 tahun','80'],['Masa jabatan < 3 tahun','60']] },
+                keragamanJabatanInfo: { intro: 'Konversi keragaman riwayat jabatan:', rows: [['Lintas instansi','100'],['Lintas unit kerja','80'],['Hanya 1 unit kerja','60']] },
+                nondefinitifInfo: { intro: 'Konversi penugasan nondefinitif:', rows: [['Pj. Kepala Daerah','100'],['Plt. jabatan lebih tinggi','80'],['Plt. jabatan setara','60'],['Plh. jabatan lebih tinggi','40'],['Plh. jabatan setara','20'],['Tidak Punya','0']] },
+                potensi: { intro: 'Konversi nilai penilaian potensi dilakukan berdasarkan ketentuan berikut:', rows: [['Skor setiap indikator','0–5'],['Jumlah indikator','8 indikator'],['Skor maksimal','40'],['Rumus konversi ke persentase','Total skor ÷ 40 × 100%']] },
+                pendidikan: { intro: 'Nilai berdasarkan jenjang pendidikan formal terakhir:', rows: [['Doktor / S3','100'],['Magister / S2','90'],['Sarjana / S1 / DIV','80'],['Diploma III','70'],['SLTA / Sederajat','60']] },
+                kesesuaian: { intro: 'Nilai berdasarkan kesesuaian bidang ilmu dengan rumpun jabatan target:', rows: [['Ilmu sesuai','100'],['Tidak sesuai','50']] },
+                disiplin: { intro: 'Nilai berdasarkan riwayat hukuman disiplin dalam 5 tahun terakhir:', rows: [['Tidak pernah hukuman','100'],['Hukuman ringan','75'],['Hukuman sedang','50'],['Hukuman berat','25'],['Sedang dihukum','0']] }
+            };
+            const tableData = conversionTables[key];
+            if (tableData) {
+                const rowsHtml = tableData.rows.map((row, index) =>
+                    `<tr class="${index % 2 ? 'bg-white' : 'bg-slate-50'}"><td class="px-3 py-2 border-b border-slate-100">${row[0]}</td><td class="px-3 py-2 text-center font-bold text-emerald-700 border-b border-slate-100">${row[1]}</td></tr>`
+                ).join('');
+                pengukuranEl.innerHTML = `
+                    <p class="mb-3">${tableData.intro}</p>
+                    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                        <table class="w-full text-sm border-collapse">
+                            <thead><tr class="bg-slate-100 text-slate-700">
+                                <th class="px-3 py-2.5 text-left font-bold border-b border-slate-200">Kriteria</th>
+                                <th class="px-3 py-2.5 text-center font-bold border-b border-slate-200 w-24">Nilai</th>
+                            </tr></thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>`;
+            } else {
+                pengukuranEl.textContent = data.pengukuran;
+            }
+
             const modal = document.getElementById('infoModal');
             const content = document.getElementById('infoModalContent');
             
